@@ -1,41 +1,34 @@
-package com.sysadminanywhere.sysadminanywhere.service;
+package com.sysadminanywhere.sysadminanywhere.service.search;
 
-import com.sysadminanywhere.sysadminanywhere.domain.User;
+import com.sysadminanywhere.sysadminanywhere.config.LdapConfig;
 import lombok.SneakyThrows;
 import org.apache.directory.api.ldap.model.cursor.SearchCursor;
 import org.apache.directory.api.ldap.model.entry.Entry;
 import org.apache.directory.api.ldap.model.message.*;
 import org.apache.directory.api.ldap.model.message.controls.*;
 import org.apache.directory.api.ldap.model.name.Dn;
-import org.apache.directory.ldap.client.api.LdapConnection;
-import org.apache.directory.ldap.client.api.LdapNetworkConnection;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class UsersService {
+public class SearchServiceImpl implements SearchService {
+
+    private final LdapConfig ldapConfig;
+
+    public SearchServiceImpl(LdapConfig ldapConfig) {
+        this.ldapConfig = ldapConfig;
+    }
 
     @SneakyThrows
-    public List<User> GetAll() {
+    @Override
+    public List<Entry> Search(String filter) {
 
-        List<User> list = new ArrayList<>();
+        List<Entry> list = new ArrayList<>();
 
-        String host = "192.168.245.129";
-        int port = 389;
-
-        String userName = "admin";
-        String password = "Secret2#";
-        Dn baseDn = new Dn("DC=example,DC=com");
-
-        LdapConnection connection = new LdapNetworkConnection(host, port);
-
-        BindRequest bindRequest = new BindRequestImpl();
-        bindRequest.setCredentials(password);
-        bindRequest.setSimple(true);
-        bindRequest.setName(userName);
-        connection.bind(bindRequest);
+        Entry entry = ldapConfig.GetConnection().getRootDse();
+        Dn baseDn = new Dn(entry.get("rootdomainnamingcontext").get().getString());
 
         SearchRequest searchRequest = new SearchRequestImpl();
         searchRequest.setScope(SearchScope.SUBTREE);
@@ -43,7 +36,7 @@ public class UsersService {
         searchRequest.setTimeLimit(0);
         searchRequest.setBase(baseDn);
 
-        searchRequest.setFilter("(&(objectClass=user)(objectCategory=person))");
+        searchRequest.setFilter(filter);
 
         int pageSize = 100;
 
@@ -56,12 +49,12 @@ public class UsersService {
         searchRequest.addControl(pagedResults);
 
         while (true) {
-            try (SearchCursor searchCursor = connection.search(searchRequest)) {
+            try (SearchCursor searchCursor = ldapConfig.GetConnection().search(searchRequest)) {
                 while (searchCursor.next()) {
                     Response response = searchCursor.get();
                     if (response instanceof SearchResultEntry) {
                         Entry resultEntry = ((SearchResultEntry) response).getEntry();
-                        list.add(new User(resultEntry.getDn().getName(), resultEntry.get("cn").getString()));
+                        list.add(resultEntry);
                     }
                 }
                 SearchResultDone resultDone = searchCursor.getSearchResultDone();
@@ -76,8 +69,8 @@ public class UsersService {
             }
         }
 
-        connection.unBind();
-        connection.close();
+//        connection.unBind();
+//        connection.close();
 
         return list;
     }

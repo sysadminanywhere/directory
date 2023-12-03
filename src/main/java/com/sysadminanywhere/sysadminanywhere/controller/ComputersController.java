@@ -1,29 +1,28 @@
 package com.sysadminanywhere.sysadminanywhere.controller;
 
 import com.sysadminanywhere.sysadminanywhere.domain.Computer;
-import com.sysadminanywhere.sysadminanywhere.service.ComputersService;
+import com.sysadminanywhere.sysadminanywhere.service.computers.ComputersServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/computers")
 public class ComputersController {
 
-    private final ComputersService computersService;
+    private final ComputersServiceImpl computersServiceImpl;
 
-    public ComputersController(ComputersService computersService) {
-        this.computersService = computersService;
+    public ComputersController(ComputersServiceImpl computersServiceImpl) {
+        this.computersServiceImpl = computersServiceImpl;
     }
 
     @GetMapping("/")
     public ResponseEntity<List<Computer>> getComputers() {
-        return new ResponseEntity<>(computersService.GetAll(), HttpStatus.OK);
+        return new ResponseEntity<>(computersServiceImpl.GetAll(), HttpStatus.OK);
     }
 
 }
