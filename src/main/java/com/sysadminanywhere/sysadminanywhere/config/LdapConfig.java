@@ -7,22 +7,29 @@ import org.apache.directory.api.ldap.model.message.BindRequestImpl;
 import org.apache.directory.api.ldap.model.name.Dn;
 import org.apache.directory.ldap.client.api.LdapConnection;
 import org.apache.directory.ldap.client.api.LdapNetworkConnection;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class LdapConfig {
 
+    @Value("${ldap.host.server}")
+    private String server;
+
+    @Value("${ldap.host.port}")
+    private int port;
+
+    @Value("${ldap.host.username}")
+    private String userName;
+
+    @Value("${ldap.host.password}")
+    private String password;
+
     @SneakyThrows
     @Bean
     public LdapConnection GetConnection() {
-        String host = "192.168.245.129";
-        int port = 389;
-
-        String userName = "admin";
-        String password = "Secret2#";
-
-        LdapConnection connection = new LdapNetworkConnection(host, port);
+        LdapConnection connection = new LdapNetworkConnection(server, port);
 
         BindRequest bindRequest = new BindRequestImpl();
         bindRequest.setCredentials(password);

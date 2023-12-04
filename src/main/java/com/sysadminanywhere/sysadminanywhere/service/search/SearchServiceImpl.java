@@ -7,6 +7,7 @@ import org.apache.directory.api.ldap.model.entry.Entry;
 import org.apache.directory.api.ldap.model.message.*;
 import org.apache.directory.api.ldap.model.message.controls.*;
 import org.apache.directory.api.ldap.model.name.Dn;
+import org.apache.directory.ldap.client.api.LdapConnection;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -15,10 +16,10 @@ import java.util.List;
 @Service
 public class SearchServiceImpl implements SearchService {
 
-    private final LdapConfig ldapConfig;
+    private final LdapConnection connection;
 
-    public SearchServiceImpl(LdapConfig ldapConfig) {
-        this.ldapConfig = ldapConfig;
+    public SearchServiceImpl(LdapConnection connection) {
+        this.connection = connection;
     }
 
     @SneakyThrows
@@ -27,7 +28,7 @@ public class SearchServiceImpl implements SearchService {
 
         List<Entry> list = new ArrayList<>();
 
-        Entry entry = ldapConfig.GetConnection().getRootDse();
+        Entry entry = connection.getRootDse();
         Dn baseDn = new Dn(entry.get("rootdomainnamingcontext").get().getString());
 
         SearchRequest searchRequest = new SearchRequestImpl();
@@ -49,7 +50,7 @@ public class SearchServiceImpl implements SearchService {
         searchRequest.addControl(pagedResults);
 
         while (true) {
-            try (SearchCursor searchCursor = ldapConfig.GetConnection().search(searchRequest)) {
+            try (SearchCursor searchCursor = connection.search(searchRequest)) {
                 while (searchCursor.next()) {
                     Response response = searchCursor.get();
                     if (response instanceof SearchResultEntry) {
