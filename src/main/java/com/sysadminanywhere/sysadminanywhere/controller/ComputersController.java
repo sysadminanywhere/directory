@@ -20,7 +20,7 @@ public class ComputersController {
         this.computersServiceImpl = computersServiceImpl;
     }
 
-    @GetMapping("/")
+    @GetMapping()
     public ResponseEntity<List<Computer>> getComputers() {
         return new ResponseEntity<>(computersServiceImpl.GetAll(), HttpStatus.OK);
     }

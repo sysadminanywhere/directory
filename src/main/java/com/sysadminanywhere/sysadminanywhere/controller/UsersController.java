@@ -20,7 +20,7 @@ public class UsersController {
         this.usersServiceImpl = usersServiceImpl;
     }
 
-    @GetMapping("/")
+    @GetMapping()
     public ResponseEntity<List<User>> getUsers() {
         return new ResponseEntity<>(usersServiceImpl.GetAll(), HttpStatus.OK);
     }
