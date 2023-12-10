@@ -5,7 +5,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.sysadminanywhere.sysadminanywhere.domain.User;
-import com.sysadminanywhere.sysadminanywhere.service.search.SearchService;
+import com.sysadminanywhere.sysadminanywhere.service.ldap.LdapService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,19 +22,19 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 class UsersServiceImplTest {
     @MockBean
-    private SearchService searchService;
+    private LdapService ldapService;
 
     @Autowired
     private UsersServiceImpl usersServiceImpl;
 
     /**
-     * Method under test: {@link UsersServiceImpl#GetAll()}
+     * Method under test: {@link UsersServiceImpl#getAll()}
      */
     @Test
     void testGetAll() {
-        when(searchService.Search(Mockito.<String>any())).thenReturn(new ArrayList<>());
-        List<User> actualGetAllResult = usersServiceImpl.GetAll();
-        verify(searchService).Search(Mockito.<String>any());
+        when(ldapService.search(Mockito.<String>any())).thenReturn(new ArrayList<>());
+        List<User> actualGetAllResult = usersServiceImpl.getAll();
+        verify(ldapService).search(Mockito.<String>any());
         assertTrue(actualGetAllResult.isEmpty());
     }
 }

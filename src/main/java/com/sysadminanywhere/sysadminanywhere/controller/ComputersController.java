@@ -4,9 +4,7 @@ import com.sysadminanywhere.sysadminanywhere.domain.Computer;
 import com.sysadminanywhere.sysadminanywhere.service.computers.ComputersServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,7 +20,12 @@ public class ComputersController {
 
     @GetMapping()
     public ResponseEntity<List<Computer>> getComputers() {
-        return new ResponseEntity<>(computersServiceImpl.GetAll(), HttpStatus.OK);
+        return new ResponseEntity<>(computersServiceImpl.getAll(), HttpStatus.OK);
+    }
+
+    @PostMapping()
+    public ResponseEntity<Computer> addComputer(@RequestBody Computer computer){
+        return new ResponseEntity<>(computersServiceImpl.add(computer), HttpStatus.OK);
     }
 
 }

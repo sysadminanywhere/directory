@@ -5,7 +5,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.sysadminanywhere.sysadminanywhere.domain.Computer;
-import com.sysadminanywhere.sysadminanywhere.service.search.SearchService;
+import com.sysadminanywhere.sysadminanywhere.service.ldap.LdapService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,13 +25,13 @@ class ComputersServiceImplTest {
     private ComputersServiceImpl computersServiceImpl;
 
     @MockBean
-    private SearchService searchService;
+    private LdapService ldapService;
 
     @Test
     void testGetAll() {
-        when(searchService.Search(Mockito.<String>any())).thenReturn(new ArrayList<>());
-        List<Computer> actualGetAllResult = computersServiceImpl.GetAll();
-        verify(searchService).Search(Mockito.<String>any());
+        when(ldapService.search(Mockito.<String>any())).thenReturn(new ArrayList<>());
+        List<Computer> actualGetAllResult = computersServiceImpl.getAll();
+        verify(ldapService).search(Mockito.<String>any());
         assertTrue(actualGetAllResult.isEmpty());
     }
 }

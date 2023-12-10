@@ -28,7 +28,7 @@ class UsersControllerTest {
 
     @Test
     void testGetUsers() throws Exception {
-        when(usersServiceImpl.GetAll()).thenReturn(new ArrayList<>());
+        when(usersServiceImpl.getAll()).thenReturn(new ArrayList<>());
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/api/users");
         MockMvcBuilders.standaloneSetup(usersController)
                 .build()

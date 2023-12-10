@@ -1,35 +1,57 @@
 package com.sysadminanywhere.sysadminanywhere.service.computers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.sysadminanywhere.sysadminanywhere.domain.Computer;
-import com.sysadminanywhere.sysadminanywhere.service.search.SearchService;
+import com.sysadminanywhere.sysadminanywhere.service.ldap.LdapService;
 import lombok.SneakyThrows;
 import org.apache.directory.api.ldap.model.entry.Entry;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class ComputersServiceImpl implements ComputersService {
 
-    private final SearchService searchService;
+    private final LdapService ldapService;
 
-    public ComputersServiceImpl(SearchService searchService) {
-        this.searchService = searchService;
+    public ComputersServiceImpl(LdapService ldapService) {
+        this.ldapService = ldapService;
     }
 
     @SneakyThrows
     @Override
-    public List<Computer> GetAll() {
+    public List<Computer> getAll() {
         List<Computer> list = new ArrayList<>();
-        List<Entry> result = searchService.Search("(objectClass=computer)");
+        List<Entry> result = ldapService.search("(objectClass=computer)");
 
         for (Entry entry : result) {
             list.add(new Computer(entry.getDn().getName(), entry.get("cn").getString()));
         }
 
         return list;
+    }
+
+    @Override
+    public Computer getByDN(String dn) {
+        return new Computer();
+    }
+
+    @Override
+    public Computer add(Computer computer) {
+        ldapService.add(null);
+        return new Computer();
+    }
+
+    @Override
+    public Computer update(Computer computer) {
+        return new Computer();
+    }
+
+    @Override
+    public void delete(Computer computer) {
+
     }
 
 }

@@ -1,8 +1,8 @@
-package com.sysadminanywhere.sysadminanywhere.service.search;
+package com.sysadminanywhere.sysadminanywhere.service.ldap;
 
-import com.sysadminanywhere.sysadminanywhere.config.LdapConfig;
 import lombok.SneakyThrows;
 import org.apache.directory.api.ldap.model.cursor.SearchCursor;
+import org.apache.directory.api.ldap.model.entry.DefaultEntry;
 import org.apache.directory.api.ldap.model.entry.Entry;
 import org.apache.directory.api.ldap.model.message.*;
 import org.apache.directory.api.ldap.model.message.controls.*;
@@ -14,17 +14,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class SearchServiceImpl implements SearchService {
+public class LdapServiceImpl implements LdapService {
 
     private final LdapConnection connection;
 
-    public SearchServiceImpl(LdapConnection connection) {
+    public LdapServiceImpl(LdapConnection connection) {
         this.connection = connection;
     }
 
     @SneakyThrows
     @Override
-    public List<Entry> Search(String filter) {
+    public List<Entry> search(String filter) {
 
         List<Entry> list = new ArrayList<>();
 
@@ -70,10 +70,31 @@ public class SearchServiceImpl implements SearchService {
             }
         }
 
-//        connection.unBind();
-//        connection.close();
-
         return list;
+    }
+
+    @SneakyThrows
+    @Override
+    public void add(Entry entry) {
+        connection.add(
+                new DefaultEntry(
+                        "CN=testadd_cn,CN=Computers,DC=example,DC=com",
+                        "ObjectClass: top",
+                        "ObjectClass: computer",
+                        "cn: testadd_cn",
+                        "sn: testadd_sn"
+                )
+        );
+    }
+
+    @Override
+    public void update(Entry entry) {
+
+    }
+
+    @Override
+    public void delete(Entry entry) {
+
     }
 
 }

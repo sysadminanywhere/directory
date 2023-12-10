@@ -28,7 +28,7 @@ class ComputersControllerTest {
 
     @Test
     void testGetComputers() throws Exception {
-        when(computersServiceImpl.GetAll()).thenReturn(new ArrayList<>());
+        when(computersServiceImpl.getAll()).thenReturn(new ArrayList<>());
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/api/computers");
         MockMvcBuilders.standaloneSetup(computersController)
                 .build()
