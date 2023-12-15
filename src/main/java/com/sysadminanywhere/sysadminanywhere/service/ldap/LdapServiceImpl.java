@@ -4,10 +4,12 @@ import lombok.SneakyThrows;
 import org.apache.directory.api.ldap.model.cursor.SearchCursor;
 import org.apache.directory.api.ldap.model.entry.DefaultEntry;
 import org.apache.directory.api.ldap.model.entry.Entry;
+import org.apache.directory.api.ldap.model.exception.LdapException;
 import org.apache.directory.api.ldap.model.message.*;
 import org.apache.directory.api.ldap.model.message.controls.*;
 import org.apache.directory.api.ldap.model.name.Dn;
 import org.apache.directory.ldap.client.api.LdapConnection;
+import org.apache.directory.ldap.client.api.LdapNetworkConnection;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -28,73 +30,97 @@ public class LdapServiceImpl implements LdapService {
 
         List<Entry> list = new ArrayList<>();
 
-        Entry entry = connection.getRootDse();
-        Dn baseDn = new Dn(entry.get("rootdomainnamingcontext").get().getString());
+        try {
 
-        SearchRequest searchRequest = new SearchRequestImpl();
-        searchRequest.setScope(SearchScope.SUBTREE);
-        searchRequest.addAttributes("*");
-        searchRequest.setTimeLimit(0);
-        searchRequest.setBase(baseDn);
+            Entry entry = connection.getRootDse();
+            Dn baseDn = new Dn(entry.get("rootdomainnamingcontext").get().getString());
 
-        searchRequest.setFilter(filter);
+            SearchRequest searchRequest = new SearchRequestImpl();
+            searchRequest.setScope(SearchScope.SUBTREE);
+            searchRequest.addAttributes("*");
+            searchRequest.setTimeLimit(0);
+            searchRequest.setBase(baseDn);
 
-        int pageSize = 100;
+            searchRequest.setFilter(filter);
 
-        SortRequest sortRequest = new SortRequestImpl();
-        sortRequest.addSortKey(new SortKey("cn"));
-        searchRequest.addControl(sortRequest);
+            int pageSize = 100;
 
-        PagedResults pagedResults = new PagedResultsImpl();
-        pagedResults.setSize(pageSize);
-        searchRequest.addControl(pagedResults);
+            SortRequest sortRequest = new SortRequestImpl();
+            sortRequest.addSortKey(new SortKey("cn"));
+            searchRequest.addControl(sortRequest);
 
-        while (true) {
-            try (SearchCursor searchCursor = connection.search(searchRequest)) {
-                while (searchCursor.next()) {
-                    Response response = searchCursor.get();
-                    if (response instanceof SearchResultEntry) {
-                        Entry resultEntry = ((SearchResultEntry) response).getEntry();
-                        list.add(resultEntry);
+            PagedResults pagedResults = new PagedResultsImpl();
+            pagedResults.setSize(pageSize);
+            searchRequest.addControl(pagedResults);
+
+            while (true) {
+                try (SearchCursor searchCursor = connection.search(searchRequest)) {
+                    while (searchCursor.next()) {
+                        Response response = searchCursor.get();
+                        if (response instanceof SearchResultEntry) {
+                            Entry resultEntry = ((SearchResultEntry) response).getEntry();
+                            list.add(resultEntry);
+                        }
                     }
-                }
-                SearchResultDone resultDone = searchCursor.getSearchResultDone();
-                if (resultDone != null) {
-                    var pageResultResponseControl = (PagedResults) resultDone.getControl(PagedResults.OID);
-                    if (pageResultResponseControl == null || pageResultResponseControl.getCookie().length == 0) {
-                        break;
-                    } else {
-                        pagedResults.setCookie(pageResultResponseControl.getCookie());
+                    SearchResultDone resultDone = searchCursor.getSearchResultDone();
+                    if (resultDone != null) {
+                        var pageResultResponseControl = (PagedResults) resultDone.getControl(PagedResults.OID);
+                        if (pageResultResponseControl == null || pageResultResponseControl.getCookie().length == 0) {
+                            break;
+                        } else {
+                            pagedResults.setCookie(pageResultResponseControl.getCookie());
+                        }
                     }
                 }
             }
+
+        } catch (LdapException le) {
+
         }
 
         return list;
+
     }
 
     @SneakyThrows
     @Override
     public void add(Entry entry) {
-        connection.add(
-                new DefaultEntry(
-                        "CN=testadd_cn,CN=Computers,DC=example,DC=com",
-                        "ObjectClass: top",
-                        "ObjectClass: computer",
-                        "cn: testadd_cn",
-                        "sn: testadd_sn"
-                )
-        );
+        /*
+        Entry entry = new DefaultEntry(
+		    		"cn=" + CN + "," + this.BASE_DN,
+		    		"displayName",name.trim(),
+		    		"objectclass:top",
+	            		"objectclass:person",
+		        	"objectclass:inetOrgPerson",
+				"objectclass:organizationalPerson",
+				"cn",CN,
+				"sn",CN,
+				"description:Gerrit User",
+				"mail",CN +"@myorg.com",
+				"userPassword",password
+
+		        );
+        */
+
+        AddRequest addRequest = new AddRequestImpl();
+        addRequest.setEntry(entry);
+
+        connection.add(addRequest);
     }
 
+    @SneakyThrows
     @Override
     public void update(Entry entry) {
-
+//        ModifyRequest modifyRequest = new ModifyRequestImpl();
+//        modifyRequest.setEntry(entry);
+//
+//        connection.modify(modifyRequest);
     }
 
+    @SneakyThrows
     @Override
     public void delete(Entry entry) {
-
+        connection.delete(entry.getDn());
     }
 
 }

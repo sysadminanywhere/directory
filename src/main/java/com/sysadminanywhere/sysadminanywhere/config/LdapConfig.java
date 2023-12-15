@@ -4,7 +4,9 @@ import lombok.SneakyThrows;
 import org.apache.directory.api.ldap.model.message.BindRequest;
 import org.apache.directory.api.ldap.model.message.BindRequestImpl;
 import org.apache.directory.ldap.client.api.LdapConnection;
+import org.apache.directory.ldap.client.api.LdapConnectionConfig;
 import org.apache.directory.ldap.client.api.LdapNetworkConnection;
+import org.apache.directory.ldap.client.api.NoVerificationTrustManager;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,13 +28,20 @@ public class LdapConfig {
 
     @SneakyThrows
     @Bean
-    public LdapConnection getConnection() {
-        LdapConnection connection = new LdapNetworkConnection(server, port);
+    public LdapConnection createConnection() {
+        LdapConnectionConfig sslConfig = new LdapConnectionConfig();
+        sslConfig.setLdapHost(server);
+        sslConfig.setUseSsl(true);
+        sslConfig.setLdapPort(port);
+        sslConfig.setTrustManagers(new NoVerificationTrustManager());
+
+        LdapConnection connection = new LdapNetworkConnection(sslConfig);
 
         BindRequest bindRequest = new BindRequestImpl();
         bindRequest.setCredentials(password);
         bindRequest.setSimple(true);
         bindRequest.setName(userName);
+
         connection.bind(bindRequest);
 
         return connection;
