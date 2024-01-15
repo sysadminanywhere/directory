@@ -5,11 +5,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.sysadminanywhere.sysadminanywhere.domain.User;
-import com.sysadminanywhere.sysadminanywhere.service.ldap.LdapService;
+import com.sysadminanywhere.sysadminanywhere.service.LdapService;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import com.sysadminanywhere.sysadminanywhere.service.UsersServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;

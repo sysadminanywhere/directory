@@ -1,4 +1,4 @@
-package com.sysadminanywhere.sysadminanywhere.service.ldap;
+package com.sysadminanywhere.sysadminanywhere.service;
 
 import org.apache.directory.api.ldap.model.entry.Entry;
 

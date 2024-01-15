@@ -2,7 +2,7 @@ package com.sysadminanywhere.sysadminanywhere.controller;
 
 import static org.mockito.Mockito.when;
 
-import com.sysadminanywhere.sysadminanywhere.service.users.UsersServiceImpl;
+import com.sysadminanywhere.sysadminanywhere.service.UsersServiceImpl;
 
 import java.util.ArrayList;
 

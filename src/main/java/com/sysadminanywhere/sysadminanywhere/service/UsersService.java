@@ -1,4 +1,4 @@
-package com.sysadminanywhere.sysadminanywhere.service.users;
+package com.sysadminanywhere.sysadminanywhere.service;
 
 import com.sysadminanywhere.sysadminanywhere.domain.User;
 

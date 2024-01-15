@@ -1,10 +1,6 @@
-package com.sysadminanywhere.sysadminanywhere.service.computers;
+package com.sysadminanywhere.sysadminanywhere.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import com.sysadminanywhere.sysadminanywhere.domain.Computer;
-import com.sysadminanywhere.sysadminanywhere.service.ResolveService;
-import com.sysadminanywhere.sysadminanywhere.service.ldap.LdapService;
 import lombok.SneakyThrows;
 import org.apache.directory.api.ldap.model.entry.Entry;
 import org.springframework.stereotype.Service;
@@ -30,8 +26,8 @@ public class ComputersServiceImpl implements ComputersService {
         ResolveService<Computer> resolveService = new ResolveService<>(Computer.class);
 
         for (Entry entry : result) {
-            Computer computer = resolveService.GetValues(entry);
-            list.add(new Computer(entry.getDn().getName(), entry.get("cn").getString()));
+            Computer computer = resolveService.getValues(entry);
+            //list.add(new Computer(entry.getDn().getName(), entry.get("cn").getString()));
         }
 
         return list;

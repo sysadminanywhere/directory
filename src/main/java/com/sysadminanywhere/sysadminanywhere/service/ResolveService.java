@@ -2,14 +2,11 @@ package com.sysadminanywhere.sysadminanywhere.service;
 
 import com.sysadminanywhere.sysadminanywhere.domain.AD;
 import lombok.SneakyThrows;
-import org.apache.directory.api.ldap.model.entry.Attribute;
 import org.apache.directory.api.ldap.model.entry.Entry;
+import org.apache.directory.api.ldap.model.entry.Value;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.Collection;
-import java.util.concurrent.ConcurrentHashMap;
+import java.time.LocalDateTime;
 
 public class ResolveService<T> {
 
@@ -20,7 +17,7 @@ public class ResolveService<T> {
     }
 
     @SneakyThrows
-    public T GetValues(Entry entry) {
+    public T getValues(Entry entry) {
 
         T result = typeArgumentClass.newInstance();
 
@@ -29,20 +26,62 @@ public class ResolveService<T> {
         for (Field field : fields) {
             AD property = field.getAnnotation(AD.class);
             if (property != null) {
-                if (property.name().equalsIgnoreCase("dn")) {
-                    field.setAccessible(true);
+                field.setAccessible(true);
+                if (property.name().equalsIgnoreCase("distinguishedname")) {
                     field.set(result, entry.getDn().getName());
                 } else {
                     if (entry.get(property.name()) != null) {
-                        String value = entry.get(property.name()).getString();
-                        field.setAccessible(true);
-                        field.set(result, value);
+                        Value value = entry.get(property.name()).get();
+
+                        System.out.println(field.getType().getName());
+
+                        if (field.getType().getName().equalsIgnoreCase("java.lang.String")) {
+                            field.set(result, value.getString());
+                        }
+
+                        if (field.getType().getName().equalsIgnoreCase("java.time.LocalDateTime")) {
+                            field.set(result, getLocalDateTime(value.getString()));
+                        }
+
+                        if (field.getType().getName().equalsIgnoreCase("java.util.List")) {
+                            //field.set(result, value.getString());
+                        }
+
+                        if (field.getType().getName().equalsIgnoreCase("int")) {
+                            field.set(result, Integer.valueOf(value.getString()));
+                        }
+
                     }
                 }
             }
         }
 
         return result;
+    }
+
+    private LocalDateTime getLocalDateTime(String value) {
+        try {
+            if (value.endsWith(".0Z")) {
+                int year = Integer.valueOf(value.substring(0, 4));
+                int month = Integer.valueOf(value.substring(4, 6));
+                int day = Integer.valueOf(value.substring(6, 8));
+
+                int hour = 0;
+                int minute = 0;
+                int second = 0;
+
+                if (value.length() > 8) {
+                    hour = Integer.valueOf(value.substring(8, 10));
+                    minute = Integer.valueOf(value.substring(10, 12));
+                    second = Integer.valueOf(value.substring(12, 14));
+                }
+                return LocalDateTime.of(year, month, day, hour, minute, second);
+            } else {
+                return LocalDateTime.parse(value);
+            }
+        } catch (Exception e) {
+            return null;
+        }
     }
 
 }

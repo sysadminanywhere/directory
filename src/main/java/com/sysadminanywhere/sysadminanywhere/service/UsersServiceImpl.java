@@ -1,7 +1,6 @@
-package com.sysadminanywhere.sysadminanywhere.service.users;
+package com.sysadminanywhere.sysadminanywhere.service;
 
 import com.sysadminanywhere.sysadminanywhere.domain.User;
-import com.sysadminanywhere.sysadminanywhere.service.ldap.LdapService;
 import lombok.SneakyThrows;
 import org.apache.directory.api.ldap.model.entry.Entry;
 import org.springframework.stereotype.Service;

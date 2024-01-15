@@ -1,4 +1,4 @@
-package com.sysadminanywhere.sysadminanywhere.service.computers;
+package com.sysadminanywhere.sysadminanywhere.service;
 
 import com.sysadminanywhere.sysadminanywhere.domain.Computer;
 

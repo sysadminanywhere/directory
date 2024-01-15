@@ -5,7 +5,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.sysadminanywhere.sysadminanywhere.domain.Computer;
-import com.sysadminanywhere.sysadminanywhere.service.ldap.LdapService;
+import com.sysadminanywhere.sysadminanywhere.service.ComputersServiceImpl;
+import com.sysadminanywhere.sysadminanywhere.service.LdapService;
 
 import java.util.ArrayList;
 import java.util.List;

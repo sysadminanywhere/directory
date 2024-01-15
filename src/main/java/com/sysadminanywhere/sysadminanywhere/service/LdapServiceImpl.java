@@ -1,4 +1,4 @@
-package com.sysadminanywhere.sysadminanywhere.service.ldap;
+package com.sysadminanywhere.sysadminanywhere.service;
 
 import lombok.SneakyThrows;
 import org.apache.directory.api.ldap.model.cursor.SearchCursor;
@@ -9,7 +9,6 @@ import org.apache.directory.api.ldap.model.message.*;
 import org.apache.directory.api.ldap.model.message.controls.*;
 import org.apache.directory.api.ldap.model.name.Dn;
 import org.apache.directory.ldap.client.api.LdapConnection;
-import org.apache.directory.ldap.client.api.LdapNetworkConnection;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -38,6 +37,7 @@ public class LdapServiceImpl implements LdapService {
             SearchRequest searchRequest = new SearchRequestImpl();
             searchRequest.setScope(SearchScope.SUBTREE);
             searchRequest.addAttributes("*");
+            searchRequest.setTypesOnly(false);
             searchRequest.setTimeLimit(0);
             searchRequest.setBase(baseDn);
 

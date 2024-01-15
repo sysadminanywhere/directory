@@ -1,7 +1,7 @@
 package com.sysadminanywhere.sysadminanywhere.controller;
 
 import com.sysadminanywhere.sysadminanywhere.domain.User;
-import com.sysadminanywhere.sysadminanywhere.service.users.UsersServiceImpl;
+import com.sysadminanywhere.sysadminanywhere.service.UsersServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
