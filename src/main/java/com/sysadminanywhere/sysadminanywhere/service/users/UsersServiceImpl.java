@@ -38,7 +38,8 @@ public class UsersServiceImpl implements UsersService {
 
     @Override
     public User add(User user) {
-        return new User();
+        ldapService.add(null);
+        return null;
     }
 
     @Override

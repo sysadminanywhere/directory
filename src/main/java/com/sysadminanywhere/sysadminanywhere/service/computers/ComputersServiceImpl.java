@@ -3,6 +3,7 @@ package com.sysadminanywhere.sysadminanywhere.service.computers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.sysadminanywhere.sysadminanywhere.domain.Computer;
+import com.sysadminanywhere.sysadminanywhere.service.ResolveService;
 import com.sysadminanywhere.sysadminanywhere.service.ldap.LdapService;
 import lombok.SneakyThrows;
 import org.apache.directory.api.ldap.model.entry.Entry;
@@ -26,7 +27,10 @@ public class ComputersServiceImpl implements ComputersService {
         List<Computer> list = new ArrayList<>();
         List<Entry> result = ldapService.search("(objectClass=computer)");
 
+        ResolveService<Computer> resolveService = new ResolveService<>(Computer.class);
+
         for (Entry entry : result) {
+            Computer computer = resolveService.GetValues(entry);
             list.add(new Computer(entry.getDn().getName(), entry.get("cn").getString()));
         }
 

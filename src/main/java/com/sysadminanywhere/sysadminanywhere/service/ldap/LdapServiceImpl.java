@@ -83,27 +83,28 @@ public class LdapServiceImpl implements LdapService {
     }
 
     @SneakyThrows
-    @Override
     public void add(Entry entry) {
-        /*
-        Entry entry = new DefaultEntry(
-		    		"cn=" + CN + "," + this.BASE_DN,
-		    		"displayName",name.trim(),
-		    		"objectclass:top",
-	            		"objectclass:person",
-		        	"objectclass:inetOrgPerson",
-				"objectclass:organizationalPerson",
-				"cn",CN,
-				"sn",CN,
-				"description:Gerrit User",
-				"mail",CN +"@myorg.com",
-				"userPassword",password
 
-		        );
-        */
+        String CN = "gerrit";
+        String password = "aaa111#";
+
+        Entry entry1 = new DefaultEntry(
+                "cn=" + CN + ",DC=EXAMPLE,DC=COM",
+                "displayName", "Gerrit User",
+                "objectclass:top",
+                "objectclass:person",
+                "objectclass:inetOrgPerson",
+                "objectclass:organizationalPerson",
+                "cn", CN,
+                "sn", CN,
+                "description:Gerrit User",
+                "mail", CN + "@example.com",
+                "userPassword", password
+
+        );
 
         AddRequest addRequest = new AddRequestImpl();
-        addRequest.setEntry(entry);
+        addRequest.setEntry(entry1);
 
         connection.add(addRequest);
     }
