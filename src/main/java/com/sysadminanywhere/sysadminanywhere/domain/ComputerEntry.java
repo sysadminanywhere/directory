@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Computer {
+public class ComputerEntry {
 
     @AD(name = "cn")
     private String cn;

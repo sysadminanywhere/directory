@@ -1,16 +1,16 @@
-package com.sysadminanywhere.sysadminanywhere.service.users;
+package com.sysadminanywhere.sysadminanywhere.service.computers;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.sysadminanywhere.sysadminanywhere.domain.User;
+import com.sysadminanywhere.sysadminanywhere.domain.ComputerEntry;
+import com.sysadminanywhere.sysadminanywhere.service.ComputersService;
 import com.sysadminanywhere.sysadminanywhere.service.LdapService;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.sysadminanywhere.sysadminanywhere.service.UsersServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -19,22 +19,19 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@ContextConfiguration(classes = {UsersServiceImpl.class})
+@ContextConfiguration(classes = {ComputersService.class})
 @ExtendWith(SpringExtension.class)
-class UsersServiceImplTest {
+class ComputersServiceTest {
+    @Autowired
+    private ComputersService computersService;
+
     @MockBean
     private LdapService ldapService;
 
-    @Autowired
-    private UsersServiceImpl usersServiceImpl;
-
-    /**
-     * Method under test: {@link UsersServiceImpl#getAll()}
-     */
     @Test
     void testGetAll() {
         when(ldapService.search(Mockito.<String>any())).thenReturn(new ArrayList<>());
-        List<User> actualGetAllResult = usersServiceImpl.getAll();
+        List<ComputerEntry> actualGetAllResult = computersService.getAll();
         verify(ldapService).search(Mockito.<String>any());
         assertTrue(actualGetAllResult.isEmpty());
     }

@@ -2,7 +2,7 @@ package com.sysadminanywhere.sysadminanywhere.controller;
 
 import static org.mockito.Mockito.when;
 
-import com.sysadminanywhere.sysadminanywhere.service.ComputersServiceImpl;
+import com.sysadminanywhere.sysadminanywhere.service.ComputersService;
 
 import java.util.ArrayList;
 
@@ -24,11 +24,11 @@ class ComputersControllerTest {
     private ComputersController computersController;
 
     @MockBean
-    private ComputersServiceImpl computersServiceImpl;
+    private ComputersService computersService;
 
     @Test
     void testGetComputers() throws Exception {
-        when(computersServiceImpl.getAll()).thenReturn(new ArrayList<>());
+        when(computersService.getAll()).thenReturn(new ArrayList<>());
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/api/computers");
         MockMvcBuilders.standaloneSetup(computersController)
                 .build()

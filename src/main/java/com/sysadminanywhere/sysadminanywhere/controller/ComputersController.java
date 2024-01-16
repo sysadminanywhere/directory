@@ -1,7 +1,7 @@
 package com.sysadminanywhere.sysadminanywhere.controller;
 
-import com.sysadminanywhere.sysadminanywhere.domain.Computer;
-import com.sysadminanywhere.sysadminanywhere.service.ComputersServiceImpl;
+import com.sysadminanywhere.sysadminanywhere.domain.ComputerEntry;
+import com.sysadminanywhere.sysadminanywhere.service.ComputersService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,20 +12,20 @@ import java.util.List;
 @RequestMapping("/api/computers")
 public class ComputersController {
 
-    private final ComputersServiceImpl computersServiceImpl;
+    private final ComputersService computersService;
 
-    public ComputersController(ComputersServiceImpl computersServiceImpl) {
-        this.computersServiceImpl = computersServiceImpl;
+    public ComputersController(ComputersService computersService) {
+        this.computersService = computersService;
     }
 
     @GetMapping()
-    public ResponseEntity<List<Computer>> getComputers() {
-        return new ResponseEntity<>(computersServiceImpl.getAll(), HttpStatus.OK);
+    public ResponseEntity<List<ComputerEntry>> getComputers() {
+        return new ResponseEntity<>(computersService.getAll(), HttpStatus.OK);
     }
 
     @PostMapping()
-    public ResponseEntity<Computer> addComputer(@RequestBody Computer computer){
-        return new ResponseEntity<>(computersServiceImpl.add(computer), HttpStatus.OK);
+    public ResponseEntity<ComputerEntry> addComputer(@RequestBody ComputerEntry computer){
+        return new ResponseEntity<>(computersService.add(computer), HttpStatus.OK);
     }
 
 }
