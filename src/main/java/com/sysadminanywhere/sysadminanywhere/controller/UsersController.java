@@ -34,7 +34,7 @@ public class UsersController {
         user.setSamAccountName(addUser.getSAMAccountName());
         user.setUserPrincipalName(addUser.getUserPrincipalName());
 
-        return new ResponseEntity<>(usersService.add(user, addUser.getPassword()), HttpStatus.OK);
+        return new ResponseEntity<>(usersService.add(addUser.getDistinguishedName(), user, addUser.getPassword()), HttpStatus.OK);
     }
 
 }

@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AddUserDto {
+    private String distinguishedName;
     private String displayName;
     private String initials;
     private String firstName;

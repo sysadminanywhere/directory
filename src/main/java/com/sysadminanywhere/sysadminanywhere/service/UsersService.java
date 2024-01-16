@@ -38,15 +38,21 @@ public class UsersService {
     }
 
     @SneakyThrows
-    public UserEntry add(UserEntry user, String password) {
+    public UserEntry add(String distinguishedName, UserEntry user, String password) {
 
         if (user.getUserPrincipalName().isEmpty())
             user.setUserPrincipalName(user.getSamAccountName() + "@" + ldapService.DomainName());
 
-        String cn = user.getCn();
+        String dn;
+
+        if(distinguishedName.isEmpty()) {
+            dn = "cn=" + user.getCn() + "," + ldapService.getUsersContainer();
+        } else {
+            dn = "cn=" + user.getCn() + "," + distinguishedName;
+        }
 
         Entry entry = new DefaultEntry(
-                "cn=" + cn,
+                dn,
                 "displayName", user.getDisplayName(),
                 "initials", user.getInitials(),
                 "givenName", user.getFirstName(),
