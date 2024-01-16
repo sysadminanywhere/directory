@@ -16,69 +16,69 @@ public class GroupEntry {
     private String cn;
 
     @AD(name = "whencreated")
-    public LocalDateTime created;
+    private LocalDateTime created;
 
     @AD(name = "description")
-    public String description;
+    private String description;
 
     @AD(name = "distinguishedname")
-    public String distinguishedName;
+    private String distinguishedName;
 
     @AD(name = "whenchanged")
-    public LocalDateTime modified;
+    private LocalDateTime modified;
 
     @AD(name = "objectcategory")
-    public String objectCategory;
+    private String objectCategory;
 
     @AD(name = "objectclass")
-    public List<String> objectClass;
+    private List<String> objectClass;
 
 //    @AD(name = "objectguid")
-//    public Guid objectGUID;
+//    private Guid objectGUID;
 //
 //    @AD(name = "objectsid")
-//    public ADSID sid;
+//    private ADSID sid;
 
     @AD(name = "samaccountname")
-    public String samAccountName;
+    private String samAccountName;
 
     @AD(name = "managedby")
-    public String managedBy;
+    private String managedBy;
 
     @AD(name = "memberof")
-    public List<String> memberOf;
+    private List<String> memberOf;
 
     @AD(name = "member")
-    public List<String> members;
+    private List<String> members;
 
     @AD(name = "grouptype")
-    public long groupType;
+    private long groupType;
 
     @AD(name = "iscriticalsystemobject")
-    public boolean isCriticalSystemObject;
+    private boolean isCriticalSystemObject;
 
     @AD(name = "samaccounttype")
-    public int samAccountType;
+    private int samAccountType;
 
     @AD(name = "systemflags")
-    public int systemFlags;
+    private int systemFlags;
 
     @AD(name = "adspath")
-    public String adsPath;
+    private String adsPath;
 
     @AD(name = "name")
-    public String name;
+    private String name;
 
     @AD(name = "instancetype")
-    public int instanceType;
+    private int instanceType;
 
     @AD(name = "admincount")
-    public int adminCount;
+    private int adminCount;
 
     @AD(name = "primarygroupid")
-    public int primaryGroupId;
+    private int primaryGroupId;
 
-//    public String ADGroupType
+//    private String ADGroupType
 //    {
 //        get
 //        {

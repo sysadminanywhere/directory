@@ -19,13 +19,13 @@ public class GroupsController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<GroupEntry>> getUsers() {
+    public ResponseEntity<List<GroupEntry>> getGroups() {
         return new ResponseEntity<>(groupsService.getAll(), HttpStatus.OK);
     }
 
     @PostMapping()
-    public ResponseEntity<GroupEntry> addUser(@RequestBody GroupEntry user){
-        return new ResponseEntity<>(groupsService.add(user), HttpStatus.OK);
+    public ResponseEntity<GroupEntry> addGroup(@RequestBody GroupEntry group){
+        return new ResponseEntity<>(groupsService.add(group), HttpStatus.OK);
     }
 
 }
