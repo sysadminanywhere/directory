@@ -27,7 +27,7 @@ public class ComputersServiceImpl implements ComputersService {
 
         for (Entry entry : result) {
             Computer computer = resolveService.getValues(entry);
-            //list.add(new Computer(entry.getDn().getName(), entry.get("cn").getString()));
+            list.add(computer);
         }
 
         return list;

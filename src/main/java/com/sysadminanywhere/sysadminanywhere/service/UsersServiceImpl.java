@@ -23,8 +23,11 @@ public class UsersServiceImpl implements UsersService {
         List<User> list = new ArrayList<>();
         List<Entry> result = ldapService.search("(&(objectClass=user)(objectCategory=person))");
 
+        ResolveService<User> resolveService = new ResolveService<>(User.class);
+
         for (Entry entry : result) {
-            list.add(new User(entry.getDn().getName(), entry.get("cn").getString()));
+            User user = resolveService.getValues(entry);
+            list.add(user);
         }
 
         return list;

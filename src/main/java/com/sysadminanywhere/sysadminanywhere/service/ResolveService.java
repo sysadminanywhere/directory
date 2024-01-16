@@ -2,11 +2,13 @@ package com.sysadminanywhere.sysadminanywhere.service;
 
 import com.sysadminanywhere.sysadminanywhere.domain.AD;
 import lombok.SneakyThrows;
-import org.apache.directory.api.ldap.model.entry.Entry;
-import org.apache.directory.api.ldap.model.entry.Value;
+import org.apache.directory.api.ldap.model.entry.*;
 
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class ResolveService<T> {
 
@@ -21,6 +23,8 @@ public class ResolveService<T> {
 
         T result = typeArgumentClass.newInstance();
 
+//        Collection<Attribute> attributes = entry.getAttributes();
+
         Field[] fields = result.getClass().getDeclaredFields();
 
         for (Field field : fields) {
@@ -33,22 +37,36 @@ public class ResolveService<T> {
                     if (entry.get(property.name()) != null) {
                         Value value = entry.get(property.name()).get();
 
-                        System.out.println(field.getType().getName());
-
-                        if (field.getType().getName().equalsIgnoreCase("java.lang.String")) {
+                        if (field.getType().getName().equalsIgnoreCase(String.class.getName())) {
                             field.set(result, value.getString());
                         }
 
-                        if (field.getType().getName().equalsIgnoreCase("java.time.LocalDateTime")) {
+                        if (field.getType().getName().equalsIgnoreCase(LocalDateTime.class.getName())) {
                             field.set(result, getLocalDateTime(value.getString()));
                         }
 
                         if (field.getType().getName().equalsIgnoreCase("java.util.List")) {
-                            //field.set(result, value.getString());
+                            List<String> list = new ArrayList<>();
+                            for (Value v : entry.get(property.name())) {
+                                list.add(v.getString());
+                            }
+                            field.set(result, list);
                         }
 
-                        if (field.getType().getName().equalsIgnoreCase("int")) {
+                        if (field.getType().getName().equalsIgnoreCase(int.class.getName())) {
                             field.set(result, Integer.valueOf(value.getString()));
+                        }
+
+                        if (field.getType().getName().equalsIgnoreCase(long.class.getName())) {
+                            field.set(result, Long.valueOf(value.getString()));
+                        }
+
+                        if (field.getType().getName().equalsIgnoreCase(boolean.class.getName())) {
+                            field.set(result, Boolean.valueOf(value.getString()));
+                        }
+
+                        if (field.getType().getName().equalsIgnoreCase(byte[].class.getName())) {
+                            field.set(result, value.getBytes());
                         }
 
                     }
