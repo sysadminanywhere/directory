@@ -7,11 +7,14 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ComputersService {
 
     private final LdapService ldapService;
+
+    ResolveService<ComputerEntry> resolveService = new ResolveService<>(ComputerEntry.class);
 
     public ComputersService(LdapService ldapService) {
         this.ldapService = ldapService;
@@ -19,21 +22,18 @@ public class ComputersService {
 
     @SneakyThrows
     public List<ComputerEntry> getAll() {
-        List<ComputerEntry> list = new ArrayList<>();
         List<Entry> result = ldapService.search("(objectClass=computer)");
-
-        ResolveService<ComputerEntry> resolveService = new ResolveService<>(ComputerEntry.class);
-
-        for (Entry entry : result) {
-            ComputerEntry computer = resolveService.getValues(entry);
-            list.add(computer);
-        }
-
-        return list;
+        return resolveService.getList(result);
     }
 
-    public ComputerEntry getByDN(String dn) {
-        return new ComputerEntry();
+    public ComputerEntry getByCN(String cn) {
+        List<Entry> result = ldapService.search("(&(objectClass=computer)(cn=" + cn + "))");
+        Optional<Entry> entry = result.stream().findFirst();
+
+        if (entry.isPresent())
+            return resolveService.getValue(entry.get());
+        else
+            return null;
     }
 
     public ComputerEntry add(ComputerEntry computer) {

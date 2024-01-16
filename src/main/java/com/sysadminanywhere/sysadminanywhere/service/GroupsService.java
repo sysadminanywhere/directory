@@ -8,11 +8,14 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class GroupsService {
 
     private final LdapService ldapService;
+
+    ResolveService<GroupEntry> resolveService = new ResolveService<>(GroupEntry.class);
 
     public GroupsService(LdapService ldapService) {
         this.ldapService = ldapService;
@@ -20,21 +23,18 @@ public class GroupsService {
 
     @SneakyThrows
     public List<GroupEntry> getAll() {
-        List<GroupEntry> list = new ArrayList<>();
         List<Entry> result = ldapService.search("(objectClass=group)");
-
-        ResolveService<GroupEntry> resolveService = new ResolveService<>(GroupEntry.class);
-
-        for (Entry entry : result) {
-            GroupEntry group = resolveService.getValues(entry);
-            list.add(group);
-        }
-
-        return list;
+        return resolveService.getList(result);
     }
 
-    public GroupEntry getByDN(String dn) {
-        return new GroupEntry();
+    public GroupEntry getByCN(String cn) {
+        List<Entry> result = ldapService.search("(&(objectClass=computer)(cn=" + cn + "))");
+        Optional<Entry> entry = result.stream().findFirst();
+
+        if (entry.isPresent())
+            return resolveService.getValue(entry.get());
+        else
+            return null;
     }
 
     public GroupEntry add(GroupEntry group) {

@@ -18,9 +18,29 @@ import java.util.List;
 public class LdapServiceImpl implements LdapService {
 
     private final LdapConnection connection;
+    private String domainName;
+    private String defaultNamingContext;
+    private Dn baseDn;
 
+    @SneakyThrows
     public LdapServiceImpl(LdapConnection connection) {
         this.connection = connection;
+
+        Entry entry = connection.getRootDse();
+        baseDn = new Dn(entry.get("rootdomainnamingcontext").get().getString());
+        defaultNamingContext = baseDn.getName();
+        domainName = defaultNamingContext.toUpperCase().replace("DC=", "").replace(",", ".").toLowerCase();
+        System.out.println();
+    }
+
+    @Override
+    public String DefaultNamingContext() {
+        return defaultNamingContext;
+    }
+
+    @Override
+    public String DomainName() {
+        return domainName;
     }
 
     @SneakyThrows
@@ -30,10 +50,6 @@ public class LdapServiceImpl implements LdapService {
         List<Entry> list = new ArrayList<>();
 
         try {
-
-            Entry entry = connection.getRootDse();
-            Dn baseDn = new Dn(entry.get("rootdomainnamingcontext").get().getString());
-
             SearchRequest searchRequest = new SearchRequestImpl();
             searchRequest.setScope(SearchScope.SUBTREE);
             searchRequest.addAttributes("*");
@@ -84,27 +100,8 @@ public class LdapServiceImpl implements LdapService {
 
     @SneakyThrows
     public void add(Entry entry) {
-
-        String CN = "gerrit";
-        String password = "aaa111#";
-
-        Entry entry1 = new DefaultEntry(
-                "cn=" + CN + ",DC=EXAMPLE,DC=COM",
-                "displayName", "Gerrit User",
-                "objectclass:top",
-                "objectclass:person",
-                "objectclass:inetOrgPerson",
-                "objectclass:organizationalPerson",
-                "cn", CN,
-                "sn", CN,
-                "description:Gerrit User",
-                "mail", CN + "@example.com",
-                "userPassword", password
-
-        );
-
         AddRequest addRequest = new AddRequestImpl();
-        addRequest.setEntry(entry1);
+        addRequest.setEntry(entry);
 
         connection.add(addRequest);
     }

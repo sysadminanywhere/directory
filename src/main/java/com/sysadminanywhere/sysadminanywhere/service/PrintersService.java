@@ -7,11 +7,14 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PrintersService {
 
     private final LdapService ldapService;
+
+    ResolveService<PrinterEntry> resolveService = new ResolveService<>(PrinterEntry.class);
 
     public PrintersService(LdapService ldapService) {
         this.ldapService = ldapService;
@@ -19,21 +22,18 @@ public class PrintersService {
 
     @SneakyThrows
     public List<PrinterEntry> getAll() {
-        List<PrinterEntry> list = new ArrayList<>();
         List<Entry> result = ldapService.search("(objectClass=printQueue)");
-
-        ResolveService<PrinterEntry> resolveService = new ResolveService<>(PrinterEntry.class);
-
-        for (Entry entry : result) {
-            PrinterEntry printer = resolveService.getValues(entry);
-            list.add(printer);
-        }
-
-        return list;
+        return resolveService.getList(result);
     }
 
-    public PrinterEntry getByDN(String dn) {
-        return new PrinterEntry();
+    public PrinterEntry getByCN(String cn) {
+        List<Entry> result = ldapService.search("(&(objectClass=computer)(cn=" + cn + "))");
+        Optional<Entry> entry = result.stream().findFirst();
+
+        if (entry.isPresent())
+            return resolveService.getValue(entry.get());
+        else
+            return null;
     }
 
     public PrinterEntry add(PrinterEntry printer) {

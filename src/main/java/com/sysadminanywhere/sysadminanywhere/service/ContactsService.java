@@ -7,11 +7,14 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ContactsService {
 
     private final LdapService ldapService;
+
+    ResolveService<ContactEntry> resolveService = new ResolveService<>(ContactEntry.class);
 
     public ContactsService(LdapService ldapService) {
         this.ldapService = ldapService;
@@ -19,21 +22,18 @@ public class ContactsService {
 
     @SneakyThrows
     public List<ContactEntry> getAll() {
-        List<ContactEntry> list = new ArrayList<>();
         List<Entry> result = ldapService.search("(&(objectClass=contact)(objectCategory=person))");
-
-        ResolveService<ContactEntry> resolveService = new ResolveService<>(ContactEntry.class);
-
-        for (Entry entry : result) {
-            ContactEntry contact = resolveService.getValues(entry);
-            list.add(contact);
-        }
-
-        return list;
+        return resolveService.getList(result);
     }
 
-    public ContactEntry getByDN(String dn) {
-        return new ContactEntry();
+    public ContactEntry getByCN(String cn) {
+        List<Entry> result = ldapService.search("(&(objectClass=computer)(cn=" + cn + "))");
+        Optional<Entry> entry = result.stream().findFirst();
+
+        if (entry.isPresent())
+            return resolveService.getValue(entry.get());
+        else
+            return null;
     }
 
     public ContactEntry add(ContactEntry contact) {

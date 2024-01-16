@@ -21,7 +21,18 @@ public class ResolveService<T> {
     }
 
     @SneakyThrows
-    public T getValues(Entry entry) {
+    public List<T> getList(List<Entry> list) {
+        List<T> result = new ArrayList<>();
+
+        for (Entry entry : list) {
+            result.add(getValue(entry));
+        }
+
+        return result;
+    }
+
+    @SneakyThrows
+    public T getValue(Entry entry) {
 
         T result = typeArgumentClass.newInstance();
 

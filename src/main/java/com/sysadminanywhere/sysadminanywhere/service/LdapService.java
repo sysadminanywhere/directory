@@ -5,6 +5,10 @@ import org.apache.directory.api.ldap.model.entry.Entry;
 import java.util.List;
 
 public interface LdapService {
+
+    String DomainName();
+    String DefaultNamingContext();
+
     List<Entry> search(String filter);
     void add(Entry entry);
     void update(Entry entry);
