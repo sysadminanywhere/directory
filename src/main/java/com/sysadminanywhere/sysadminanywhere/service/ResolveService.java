@@ -1,6 +1,7 @@
 package com.sysadminanywhere.sysadminanywhere.service;
 
 import com.sysadminanywhere.sysadminanywhere.domain.AD;
+import com.sysadminanywhere.sysadminanywhere.domain.ADSID;
 import lombok.SneakyThrows;
 import org.apache.directory.api.ldap.model.entry.*;
 
@@ -9,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 public class ResolveService<T> {
 
@@ -57,16 +59,20 @@ public class ResolveService<T> {
                             field.set(result, Integer.valueOf(value.getString()));
                         }
 
-                        if (field.getType().getName().equalsIgnoreCase(long.class.getName())) {
-                            field.set(result, Long.valueOf(value.getString()));
-                        }
-
                         if (field.getType().getName().equalsIgnoreCase(boolean.class.getName())) {
                             field.set(result, Boolean.valueOf(value.getString()));
                         }
 
                         if (field.getType().getName().equalsIgnoreCase(byte[].class.getName())) {
                             field.set(result, value.getBytes());
+                        }
+
+                        if (field.getType().getName().equalsIgnoreCase(UUID.class.getName())) {
+                            field.set(result, UUID.nameUUIDFromBytes(value.getBytes()));
+                        }
+
+                        if (field.getType().getName().equalsIgnoreCase(ADSID.class.getName())) {
+                            field.set(result, new ADSID(value.getBytes()));
                         }
 
                     }

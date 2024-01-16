@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor
@@ -36,11 +37,11 @@ public class UserEntry {
     @AD(name = "objectclass")
     private List<String> objectClass;
 
-//        @AD(name = "objectguid")
-//    private Guid objectGUID;
+    @AD(name = "objectguid")
+    private UUID objectGUID;
 
-//        @AD(name = "objectsid")
-//    private ADSID sid;
+    @AD(name = "objectsid")
+    private ADSID sid;
 
     @AD(name = "samaccountname")
     private String samAccountName;
@@ -59,9 +60,6 @@ public class UserEntry {
 
     @AD(name = "lockouttime")
     private LocalDateTime accountLockoutTime;
-
-    //[ADAttribute("usercertificate")]
-    //private List<String> certificates { get; set; }
 
     @AD(name = "l")
     private String city;
