@@ -1,6 +1,6 @@
 package com.sysadminanywhere.sysadminanywhere.controller;
 
-import com.sysadminanywhere.sysadminanywhere.domain.PrinterEntry;
+import com.sysadminanywhere.sysadminanywhere.model.PrinterEntry;
 import com.sysadminanywhere.sysadminanywhere.service.PrintersService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

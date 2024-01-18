@@ -1,4 +1,4 @@
-package com.sysadminanywhere.sysadminanywhere.domain;
+package com.sysadminanywhere.sysadminanywhere.model;
 
 public class ADSID {
 

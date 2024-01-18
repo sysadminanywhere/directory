@@ -1,11 +1,10 @@
 package com.sysadminanywhere.sysadminanywhere.service;
 
-import com.sysadminanywhere.sysadminanywhere.domain.ComputerEntry;
+import com.sysadminanywhere.sysadminanywhere.model.ComputerEntry;
 import lombok.SneakyThrows;
 import org.apache.directory.api.ldap.model.entry.Entry;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 

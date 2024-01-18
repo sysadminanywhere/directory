@@ -1,6 +1,6 @@
 package com.sysadminanywhere.sysadminanywhere.controller;
 
-import com.sysadminanywhere.sysadminanywhere.domain.ContactEntry;
+import com.sysadminanywhere.sysadminanywhere.model.ContactEntry;
 import com.sysadminanywhere.sysadminanywhere.service.ContactsService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

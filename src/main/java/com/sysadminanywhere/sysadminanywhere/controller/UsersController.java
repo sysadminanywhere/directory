@@ -1,7 +1,7 @@
 package com.sysadminanywhere.sysadminanywhere.controller;
 
 import com.sysadminanywhere.sysadminanywhere.controller.dto.AddUserDto;
-import com.sysadminanywhere.sysadminanywhere.domain.UserEntry;
+import com.sysadminanywhere.sysadminanywhere.model.UserEntry;
 import com.sysadminanywhere.sysadminanywhere.service.UsersService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

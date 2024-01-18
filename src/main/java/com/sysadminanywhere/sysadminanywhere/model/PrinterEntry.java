@@ -1,4 +1,4 @@
-package com.sysadminanywhere.sysadminanywhere.domain;
+package com.sysadminanywhere.sysadminanywhere.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,6 +1,6 @@
 package com.sysadminanywhere.sysadminanywhere.controller;
 
-import com.sysadminanywhere.sysadminanywhere.domain.ComputerEntry;
+import com.sysadminanywhere.sysadminanywhere.model.ComputerEntry;
 import com.sysadminanywhere.sysadminanywhere.service.ComputersService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

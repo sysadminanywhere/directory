@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.sysadminanywhere.sysadminanywhere.domain.ComputerEntry;
+import com.sysadminanywhere.sysadminanywhere.model.ComputerEntry;
 import com.sysadminanywhere.sysadminanywhere.service.ComputersService;
 import com.sysadminanywhere.sysadminanywhere.service.LdapService;
 

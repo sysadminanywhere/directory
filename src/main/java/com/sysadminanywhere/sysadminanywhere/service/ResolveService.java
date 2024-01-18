@@ -1,14 +1,13 @@
 package com.sysadminanywhere.sysadminanywhere.service;
 
-import com.sysadminanywhere.sysadminanywhere.domain.AD;
-import com.sysadminanywhere.sysadminanywhere.domain.ADSID;
+import com.sysadminanywhere.sysadminanywhere.model.AD;
+import com.sysadminanywhere.sysadminanywhere.model.ADSID;
 import lombok.SneakyThrows;
 import org.apache.directory.api.ldap.model.entry.*;
 
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
