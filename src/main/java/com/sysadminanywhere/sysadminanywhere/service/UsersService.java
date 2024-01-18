@@ -71,8 +71,9 @@ public class UsersService {
     @SneakyThrows
     public UserEntry update(UserEntry user) {
         Entry entry = resolveService.getEntry(user);
+        Entry oldEntry = resolveService.getEntry(getByCN(user.getCn()));
 
-        ldapService.update(entry);
+        ldapService.update(resolveService.getModifyRequest(entry, oldEntry));
         return getByCN(user.getCn());
     }
 

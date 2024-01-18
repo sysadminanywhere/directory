@@ -4,10 +4,14 @@ import com.sysadminanywhere.sysadminanywhere.model.AD;
 import com.sysadminanywhere.sysadminanywhere.model.ADSID;
 import lombok.SneakyThrows;
 import org.apache.directory.api.ldap.model.entry.*;
+import org.apache.directory.api.ldap.model.message.ModifyDnRequestImpl;
+import org.apache.directory.api.ldap.model.message.ModifyRequest;
+import org.apache.directory.api.ldap.model.message.ModifyRequestImpl;
 
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -131,6 +135,29 @@ public class ResolveService<T> {
         }
 
         return entry;
+    }
+
+    public ModifyRequest getModifyRequest(Entry newEntry, Entry oldEntry) {
+        ModifyRequest modifyRequest = new ModifyRequestImpl();
+
+        for (Attribute attribute : newEntry.getAttributes()) {
+            if (oldEntry.contains(attribute)) {
+                Modification modification = new DefaultModification(ModificationOperation.REPLACE_ATTRIBUTE, attribute);
+                modifyRequest.addModification(modification);
+            } else {
+                Modification modification = new DefaultModification(ModificationOperation.ADD_ATTRIBUTE, attribute);
+                modifyRequest.addModification(modification);
+            }
+        }
+
+        for (Attribute attribute : oldEntry.getAttributes()) {
+            if (!newEntry.contains(attribute)) {
+                Modification modification = new DefaultModification(ModificationOperation.REMOVE_ATTRIBUTE, attribute);
+                modifyRequest.addModification(modification);
+            }
+        }
+
+        return modifyRequest;
     }
 
     private LocalDateTime getLocalDateTime(String value) {

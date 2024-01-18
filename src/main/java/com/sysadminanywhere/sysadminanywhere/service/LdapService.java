@@ -122,9 +122,7 @@ public class LdapService {
     }
 
     @SneakyThrows
-    public void update(Entry entry) {
-        ModifyRequest modifyRequest = new ModifyRequestImpl();
-
+    public void update(ModifyRequest modifyRequest) {
         connection.modify(modifyRequest);
     }
 
