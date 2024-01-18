@@ -2,6 +2,7 @@ package com.sysadminanywhere.sysadminanywhere.service;
 
 import com.sysadminanywhere.sysadminanywhere.model.PrinterEntry;
 import lombok.SneakyThrows;
+import org.apache.directory.api.ldap.model.entry.DefaultEntry;
 import org.apache.directory.api.ldap.model.entry.Entry;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +23,7 @@ public class PrintersService {
     @SneakyThrows
     public List<PrinterEntry> getAll() {
         List<Entry> result = ldapService.search("(objectClass=printQueue)");
-        return resolveService.getList(result);
+        return resolveService.getADList(result);
     }
 
     public PrinterEntry getByCN(String cn) {
@@ -30,22 +31,15 @@ public class PrintersService {
         Optional<Entry> entry = result.stream().findFirst();
 
         if (entry.isPresent())
-            return resolveService.getValue(entry.get());
+            return resolveService.getADValue(entry.get());
         else
             return null;
     }
 
-    public PrinterEntry add(PrinterEntry printer) {
-        ldapService.add(null);
-        return null;
-    }
-
-    public PrinterEntry update(PrinterEntry printer) {
-        return new PrinterEntry();
-    }
-
+    @SneakyThrows
     public void delete(PrinterEntry printer) {
-
+        Entry entry = new DefaultEntry(printer.getDistinguishedName());
+        ldapService.delete(entry);
     }
 
 }

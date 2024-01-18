@@ -2,6 +2,7 @@ package com.sysadminanywhere.sysadminanywhere.service;
 
 import com.sysadminanywhere.sysadminanywhere.model.ComputerEntry;
 import lombok.SneakyThrows;
+import org.apache.directory.api.ldap.model.entry.DefaultEntry;
 import org.apache.directory.api.ldap.model.entry.Entry;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +23,7 @@ public class ComputersService {
     @SneakyThrows
     public List<ComputerEntry> getAll() {
         List<Entry> result = ldapService.search("(objectClass=computer)");
-        return resolveService.getList(result);
+        return resolveService.getADList(result);
     }
 
     public ComputerEntry getByCN(String cn) {
@@ -30,7 +31,7 @@ public class ComputersService {
         Optional<Entry> entry = result.stream().findFirst();
 
         if (entry.isPresent())
-            return resolveService.getValue(entry.get());
+            return resolveService.getADValue(entry.get());
         else
             return null;
     }
@@ -44,8 +45,10 @@ public class ComputersService {
         return new ComputerEntry();
     }
 
+    @SneakyThrows
     public void delete(ComputerEntry computer) {
-
+        Entry entry = new DefaultEntry(computer.getDistinguishedName());
+        ldapService.delete(entry);
     }
 
 }

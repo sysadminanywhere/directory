@@ -20,22 +20,20 @@ public class ResolveService<T> {
     }
 
     @SneakyThrows
-    public List<T> getList(List<Entry> list) {
+    public List<T> getADList(List<Entry> list) {
         List<T> result = new ArrayList<>();
 
         for (Entry entry : list) {
-            result.add(getValue(entry));
+            result.add(getADValue(entry));
         }
 
         return result;
     }
 
     @SneakyThrows
-    public T getValue(Entry entry) {
+    public T getADValue(Entry entry) {
 
         T result = typeArgumentClass.newInstance();
-
-//        Collection<Attribute> attributes = entry.getAttributes();
 
         Field[] fields = result.getClass().getDeclaredFields();
 
@@ -91,6 +89,48 @@ public class ResolveService<T> {
         }
 
         return result;
+    }
+
+    @SneakyThrows
+    public Entry getEntry(T item) {
+        Entry entry = new DefaultEntry();
+
+        Field[] fields = item.getClass().getDeclaredFields();
+
+        for (Field field : fields) {
+            AD property = field.getAnnotation(AD.class);
+            if (property != null) {
+                if (property.name().equalsIgnoreCase("distinguishedname")) {
+                    entry.setDn(field.get(item).toString());
+                } else {
+
+                    if (field.getType().getName().equalsIgnoreCase(String.class.getName())) {
+                        entry.add(property.name(), field.get(item).toString());
+                    }
+
+                    if (field.getType().getName().equalsIgnoreCase(int.class.getName())) {
+                        entry.add(property.name(), field.get(item).toString());
+                    }
+
+                    if (field.getType().getName().equalsIgnoreCase(boolean.class.getName())) {
+                        entry.add(property.name(), field.get(item).toString());
+                    }
+
+                    if (field.getType().getName().equalsIgnoreCase(byte[].class.getName())) {
+                        entry.add(property.name(), (byte[]) field.get(item));
+                    }
+
+                    if (field.getType().getName().equalsIgnoreCase("java.util.List")) {
+                        for (String s : (List<String>)field.get(item)) {
+                            entry.add(property.name(), s);
+                        }
+                    }
+
+                }
+            }
+        }
+
+        return entry;
     }
 
     private LocalDateTime getLocalDateTime(String value) {

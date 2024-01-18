@@ -23,7 +23,7 @@ public class UsersService {
     @SneakyThrows
     public List<UserEntry> getAll() {
         List<Entry> result = ldapService.search("(&(objectClass=user)(objectCategory=person))");
-        return resolveService.getList(result);
+        return resolveService.getADList(result);
     }
 
     public UserEntry getByCN(String cn) {
@@ -31,7 +31,7 @@ public class UsersService {
         Optional<Entry> entry = result.stream().findFirst();
 
         if (entry.isPresent())
-            return resolveService.getValue(entry.get());
+            return resolveService.getADValue(entry.get());
         else
             return null;
     }
@@ -68,12 +68,18 @@ public class UsersService {
         return getByCN(user.getCn());
     }
 
+    @SneakyThrows
     public UserEntry update(UserEntry user) {
-        return new UserEntry();
+        Entry entry = resolveService.getEntry(user);
+
+        ldapService.update(entry);
+        return getByCN(user.getCn());
     }
 
+    @SneakyThrows
     public void delete(UserEntry user) {
-
+        Entry entry = new DefaultEntry(user.getDistinguishedName());
+        ldapService.delete(entry);
     }
 
 }

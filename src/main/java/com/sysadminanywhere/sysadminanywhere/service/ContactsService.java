@@ -2,6 +2,7 @@ package com.sysadminanywhere.sysadminanywhere.service;
 
 import com.sysadminanywhere.sysadminanywhere.model.ContactEntry;
 import lombok.SneakyThrows;
+import org.apache.directory.api.ldap.model.entry.DefaultEntry;
 import org.apache.directory.api.ldap.model.entry.Entry;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +23,7 @@ public class ContactsService {
     @SneakyThrows
     public List<ContactEntry> getAll() {
         List<Entry> result = ldapService.search("(&(objectClass=contact)(objectCategory=person))");
-        return resolveService.getList(result);
+        return resolveService.getADList(result);
     }
 
     public ContactEntry getByCN(String cn) {
@@ -30,7 +31,7 @@ public class ContactsService {
         Optional<Entry> entry = result.stream().findFirst();
 
         if (entry.isPresent())
-            return resolveService.getValue(entry.get());
+            return resolveService.getADValue(entry.get());
         else
             return null;
     }
@@ -44,8 +45,10 @@ public class ContactsService {
         return new ContactEntry();
     }
 
+    @SneakyThrows
     public void delete(ContactEntry contact) {
-
+        Entry entry = new DefaultEntry(contact.getDistinguishedName());
+        ldapService.delete(entry);
     }
 
 }

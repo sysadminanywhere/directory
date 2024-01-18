@@ -2,6 +2,7 @@ package com.sysadminanywhere.sysadminanywhere.service;
 
 import com.sysadminanywhere.sysadminanywhere.model.GroupEntry;
 import lombok.SneakyThrows;
+import org.apache.directory.api.ldap.model.entry.DefaultEntry;
 import org.apache.directory.api.ldap.model.entry.Entry;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +23,7 @@ public class GroupsService {
     @SneakyThrows
     public List<GroupEntry> getAll() {
         List<Entry> result = ldapService.search("(objectClass=group)");
-        return resolveService.getList(result);
+        return resolveService.getADList(result);
     }
 
     public GroupEntry getByCN(String cn) {
@@ -30,7 +31,7 @@ public class GroupsService {
         Optional<Entry> entry = result.stream().findFirst();
 
         if (entry.isPresent())
-            return resolveService.getValue(entry.get());
+            return resolveService.getADValue(entry.get());
         else
             return null;
     }
@@ -44,8 +45,10 @@ public class GroupsService {
         return new GroupEntry();
     }
 
+    @SneakyThrows
     public void delete(GroupEntry group) {
-
+        Entry entry = new DefaultEntry(group.getDistinguishedName());
+        ldapService.delete(entry);
     }
 
 }
