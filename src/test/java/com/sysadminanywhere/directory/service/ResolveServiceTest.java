@@ -11,6 +11,9 @@ import java.util.UUID;
 import lombok.SneakyThrows;
 import org.apache.directory.api.ldap.model.entry.DefaultEntry;
 import org.apache.directory.api.ldap.model.entry.Entry;
+import org.apache.directory.api.ldap.model.entry.Modification;
+import org.apache.directory.api.ldap.model.entry.ModificationOperation;
+import org.apache.directory.api.ldap.model.message.ModifyRequest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -85,6 +88,165 @@ class ResolveServiceTest {
         assertEquals(testADEntry.getObjectClass().size(), result.get("objectclass").get().length());
         assertEquals(testADEntry.getBadLogonCount(), Integer.valueOf(result.get("badpwdcount").get().getString()));
         assertEquals(testADEntry.isCriticalSystemObject(), Boolean.valueOf(result.get("iscriticalsystemobject").get().getString()));
+    }
+
+    @SneakyThrows
+    @Test
+    void testNothingModifyRequest() {
+        String dn = "CN=test,DC=example,DC=com";
+
+        Entry newEntry = new DefaultEntry(
+                dn,
+                "cn", "test1",
+                "objectguid", "11111111-6f59-4bd6-9e67-a42877589a05",
+                "iscriticalsystemobject", "true",
+                "badpwdcount", "1",
+                "jpegphoto", new byte[10],
+                "objectclass:top",
+                "objectclass:test",
+                "objectclass:object"
+        );
+
+        Entry oldEntry = new DefaultEntry(
+                dn,
+                "cn", "test1",
+                "objectguid", "11111111-6f59-4bd6-9e67-a42877589a05",
+                "iscriticalsystemobject", "true",
+                "badpwdcount", "1",
+                "jpegphoto", new byte[10],
+                "objectclass:top",
+                "objectclass:test",
+                "objectclass:object"
+        );
+
+        Class<TestADEntry> typeArgumentClass = TestADEntry.class;
+        ResolveService<TestADEntry> resolveService = new ResolveService<>(typeArgumentClass);
+
+        ModifyRequest result = resolveService.getModifyRequest(newEntry, oldEntry);
+
+        assertNotNull(result);
+        assertEquals(0, result.getModifications().size());
+    }
+
+    @SneakyThrows
+    @Test
+    void testReplaceModifyRequest() {
+        String dn = "CN=test,DC=example,DC=com";
+
+        Entry newEntry = new DefaultEntry(
+                dn,
+                "cn", "test1",
+                "objectguid", "11111111-6f59-4bd6-9e67-a42877589a05",
+                "iscriticalsystemobject", "true",
+                "badpwdcount", "1",
+                "jpegphoto", new byte[10],
+                "objectclass:top",
+                "objectclass:test",
+                "objectclass:object"
+        );
+
+        Entry oldEntry = new DefaultEntry(
+                dn,
+                "cn", "test2",
+                "objectguid", "22222222-6f59-4bd6-9e67-a42877589a05",
+                "iscriticalsystemobject", "false",
+                "badpwdcount", "0",
+                "jpegphoto", new byte[10],
+                "objectclass:top",
+                "objectclass:test",
+                "objectclass:object"
+        );
+
+        Class<TestADEntry> typeArgumentClass = TestADEntry.class;
+        ResolveService<TestADEntry> resolveService = new ResolveService<>(typeArgumentClass);
+
+        ModifyRequest result = resolveService.getModifyRequest(newEntry, oldEntry);
+
+        assertNotNull(result);
+        assertEquals(4, result.getModifications().size());
+
+        for (Modification modification : result.getModifications()) {
+            assertEquals(ModificationOperation.REPLACE_ATTRIBUTE, modification.getOperation());
+        }
+    }
+
+    @SneakyThrows
+    @Test
+    void testAddModifyRequest() {
+        String dn = "CN=test,DC=example,DC=com";
+
+        Entry newEntry = new DefaultEntry(
+                dn,
+                "cn", "test",
+                "objectguid", "11111111-6f59-4bd6-9e67-a42877589a05",
+                "iscriticalsystemobject", "true",
+                "badpwdcount", "1",
+                "jpegphoto", new byte[10],
+                "objectclass:top",
+                "objectclass:test",
+                "objectclass:object"
+        );
+
+        Entry oldEntry = new DefaultEntry(
+                dn,
+                "cn", "test",
+                "objectguid", "11111111-6f59-4bd6-9e67-a42877589a05",
+                "objectclass:top",
+                "objectclass:test",
+                "objectclass:object"
+        );
+
+        Class<TestADEntry> typeArgumentClass = TestADEntry.class;
+        ResolveService<TestADEntry> resolveService = new ResolveService<>(typeArgumentClass);
+
+        ModifyRequest result = resolveService.getModifyRequest(newEntry, oldEntry);
+
+        assertNotNull(result);
+        assertEquals(3, result.getModifications().size());
+
+        for (Modification modification : result.getModifications()) {
+            assertEquals(ModificationOperation.ADD_ATTRIBUTE, modification.getOperation());
+        }
+    }
+
+    @SneakyThrows
+    @Test
+    void testRemoveModifyRequest() {
+        String dn = "CN=test,DC=example,DC=com";
+
+        Entry newEntry = new DefaultEntry(
+                dn,
+                "cn", "test",
+                "objectguid", "11111111-6f59-4bd6-9e67-a42877589a05",
+                "objectclass:top",
+                "objectclass:test",
+                "objectclass:object"
+        );
+
+        Entry oldEntry = new DefaultEntry(
+                dn,
+                "cn", "test",
+                "objectguid", "11111111-6f59-4bd6-9e67-a42877589a05",
+                "iscriticalsystemobject", "true",
+                "badpwdcount", "1",
+                "jpegphoto", new byte[10],
+                "objectclass:top",
+                "objectclass:test",
+                "objectclass:object"
+        );
+
+
+        Class<TestADEntry> typeArgumentClass = TestADEntry.class;
+        ResolveService<TestADEntry> resolveService = new ResolveService<>(typeArgumentClass);
+
+        ModifyRequest result = resolveService.getModifyRequest(newEntry, oldEntry);
+
+        assertNotNull(result);
+        assertEquals(3, result.getModifications().size());
+
+        for (Modification modification : result.getModifications()) {
+            assertEquals(ModificationOperation.REMOVE_ATTRIBUTE, modification.getOperation());
+        }
     }
 
 }
