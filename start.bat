@@ -1,1 +1,1 @@
-docker run -p 8080:8080 --name sysadminanywhere sysadminanywhere/sysadminanywhere
+docker run -p 8080:8080 --name directory sysadminanywhere/directory
