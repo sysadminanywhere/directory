@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.sysadminanywhere</groupId>
-	<artifactId>sysadminanywhere</artifactId>
+	<artifactId>directory</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<name>Sysadmin Anywhere</name>
 	<description>Sysadmin Anywhere project</description>
