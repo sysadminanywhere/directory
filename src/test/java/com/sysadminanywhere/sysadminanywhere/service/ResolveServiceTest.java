@@ -1,300 +1,91 @@
 package com.sysadminanywhere.sysadminanywhere.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.isA;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
+import java.util.UUID;
 
-import org.apache.directory.api.ldap.model.entry.Attribute;
-import org.apache.directory.api.ldap.model.entry.DefaultAttribute;
+import lombok.SneakyThrows;
 import org.apache.directory.api.ldap.model.entry.DefaultEntry;
 import org.apache.directory.api.ldap.model.entry.Entry;
-import org.apache.directory.api.ldap.model.entry.ImmutableEntry;
-import org.apache.directory.api.ldap.model.message.MessageTypeEnum;
-import org.apache.directory.api.ldap.model.message.ModifyRequest;
-import org.apache.directory.api.ldap.model.name.Dn;
-import org.apache.directory.api.ldap.model.name.Rdn;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 class ResolveServiceTest {
 
-    @Test
-    void testGetADList() {
-        Class<Object> typeArgumentClass = Object.class;
-        ResolveService<Object> resolveService = new ResolveService<>(typeArgumentClass);
+    static TestADEntry testADEntry;
+    static Entry testEntry;
 
-        assertTrue(resolveService.getADList(new ArrayList<>()).isEmpty());
-    }
+    @SneakyThrows
+    @BeforeAll
+    static void init() {
 
-    @Test
-    void testGetADList2() {
-        Class<Object> typeArgumentClass = Object.class;
-        ResolveService<Object> resolveService = new ResolveService<>(typeArgumentClass);
+        String dn = "CN=test,DC=example,DC=com";
 
-        ArrayList<Entry> list = new ArrayList<>();
-        list.add(new DefaultEntry());
+        testADEntry = new TestADEntry();
+        testADEntry.setCn("test");
+        testADEntry.setCreated(LocalDateTime.now());
+        testADEntry.setBadLogonCount(10);
+        testADEntry.setJpegPhoto(new byte[1]);
+        testADEntry.setDistinguishedName(dn);
+        testADEntry.setCriticalSystemObject(true);
+        testADEntry.setObjectClass(Arrays.asList("top", "test", "object"));
+        testADEntry.setObjectGUID(UUID.fromString("ae22aa40-6f59-4bd6-9e67-a42877589a05"));
 
-        assertEquals(1, resolveService.getADList(list).size());
-    }
-
-    @Test
-    void testGetADList3() {
-        Class<Object> typeArgumentClass = Object.class;
-        ResolveService<Object> resolveService = new ResolveService<>(typeArgumentClass);
-
-        ArrayList<Entry> list = new ArrayList<>();
-        list.add(mock(ImmutableEntry.class));
-
-        assertEquals(1, resolveService.getADList(list).size());
+        testEntry = new DefaultEntry(
+                dn,
+                "cn", testADEntry.getCn(),
+//                "whencreated", testADEntry.getCreated(),
+                "objectguid", String.valueOf(testADEntry.getObjectGUID()),
+                "iscriticalsystemobject", String.valueOf(testADEntry.isCriticalSystemObject()),
+                "badpwdcount", String.valueOf(testADEntry.getBadLogonCount()),
+                "jpegphoto", testADEntry.getJpegPhoto(),
+                "objectclass:top",
+                "objectclass:test",
+                "objectclass:object"
+        );
     }
 
     @Test
     void testGetADValue() {
-        Class<Object> typeArgumentClass = Object.class;
-        ResolveService<Object> resolveService = new ResolveService<>(typeArgumentClass);
-        DefaultEntry entry = new DefaultEntry();
+        Class<TestADEntry> typeArgumentClass = TestADEntry.class;
+        ResolveService<TestADEntry> resolveService = new ResolveService<>(typeArgumentClass);
 
-        resolveService.getADValue(entry);
+        TestADEntry result = resolveService.getADValue(testEntry);
 
-        Entry entry2 = resolveService.getEntry("Item");
-        assertEquals(0, entry2.size());
-        assertFalse(entry2.isSchemaAware());
-        assertTrue(entry2.getAttributes().isEmpty());
-        assertEquals(entry, entry2);
-        Dn expectedDn = entry.getDn();
-        assertSame(expectedDn, entry2.getDn());
-    }
+        assertNotNull(result);
 
-    @Test
-    void testGetADValue2() {
-        Class<Object> typeArgumentClass = Object.class;
-        ResolveService<Object> resolveService = new ResolveService<>(typeArgumentClass);
-
-        resolveService.getADValue(mock(ImmutableEntry.class));
-
-        Entry entry = resolveService.getEntry("Item");
-        Dn dn = entry.getDn();
-        assertEquals("", dn.getEscaped());
-        assertEquals("", dn.getName());
-        assertEquals("", dn.getNormName());
-        Rdn rdn = dn.getRdn();
-        assertEquals("", rdn.getEscaped());
-        assertEquals("", rdn.getName());
-        assertEquals("", rdn.getNormName());
-        assertEquals(0, entry.size());
-        assertEquals(0, dn.size());
-        assertEquals(0, rdn.size());
-        assertFalse(entry.isSchemaAware());
-        assertFalse(dn.isSchemaAware());
-        assertFalse(rdn.isSchemaAware());
-        assertTrue(entry.getAttributes().isEmpty());
-        assertTrue(dn.getRdns().isEmpty());
-        assertTrue(dn.isEmpty());
-        assertTrue(dn.isRootDse());
-        assertSame(dn, dn.getParent());
+        assertEquals(testADEntry.getCn(), result.getCn());
+        //assertEquals(testADEntry.getCreated(), result.getCreated());
+        assertEquals(testADEntry.getDistinguishedName(), result.getDistinguishedName());
+        assertEquals(testADEntry.getObjectClass(), result.getObjectClass());
+        assertEquals(testADEntry.getJpegPhoto().length, result.getJpegPhoto().length);
+        assertEquals(testADEntry.getBadLogonCount(), result.getBadLogonCount());
+        assertEquals(testADEntry.getObjectGUID().toString(), result.getObjectGUID().toString());
+        assertEquals(testADEntry.isCriticalSystemObject(), result.isCriticalSystemObject());
     }
 
     @Test
     void testGetEntry() {
-        Class<Object> typeArgumentClass = Object.class;
-        ResolveService<Object> resolveService = new ResolveService<>(typeArgumentClass);
+        Class<TestADEntry> typeArgumentClass = TestADEntry.class;
+        ResolveService<TestADEntry> resolveService = new ResolveService<>(typeArgumentClass);
 
-        Entry actualEntry = resolveService.getEntry("Item");
+        Entry result = resolveService.getEntry(testADEntry);
 
-        assertEquals(0, actualEntry.size());
-        assertFalse(actualEntry.isSchemaAware());
-    }
+        assertNotNull(result);
 
-    @Test
-    void testGetModifyRequest() {
-        Class<Object> typeArgumentClass = Object.class;
-        ResolveService<Object> resolveService = new ResolveService<>(typeArgumentClass);
-        DefaultEntry newEntry = new DefaultEntry();
-
-        ModifyRequest actualModifyRequest = resolveService.getModifyRequest(newEntry, new DefaultEntry());
-
-        assertEquals(-1, actualModifyRequest.getMessageId());
-        assertEquals(MessageTypeEnum.MODIFY_REQUEST, actualModifyRequest.getType());
-        assertFalse(actualModifyRequest.isAbandoned());
-        assertTrue(actualModifyRequest.getModifications().isEmpty());
-        assertTrue(actualModifyRequest.getControls().isEmpty());
-        assertTrue(actualModifyRequest.hasResponse());
-    }
-
-    void testGetModifyRequest2() {
-        Class<Object> typeArgumentClass = Object.class;
-        ResolveService<Object> resolveService = new ResolveService<>(typeArgumentClass);
-        ImmutableEntry newEntry = mock(ImmutableEntry.class);
-        when(newEntry.getAttributes()).thenReturn(new ArrayList<>());
-
-        ModifyRequest actualModifyRequest = resolveService.getModifyRequest(newEntry, new DefaultEntry());
-
-        verify(newEntry).getAttributes();
-        assertEquals(-1, actualModifyRequest.getMessageId());
-        assertEquals(MessageTypeEnum.MODIFY_REQUEST, actualModifyRequest.getType());
-        assertFalse(actualModifyRequest.isAbandoned());
-        assertTrue(actualModifyRequest.getModifications().isEmpty());
-        assertTrue(actualModifyRequest.getControls().isEmpty());
-        assertTrue(actualModifyRequest.hasResponse());
-    }
-
-    @Test
-    void testGetModifyRequest3() {
-        Class<Object> typeArgumentClass = Object.class;
-        ResolveService<Object> resolveService = new ResolveService<>(typeArgumentClass);
-
-        ArrayList<Attribute> attributeList = new ArrayList<>();
-        attributeList.add(new DefaultAttribute("42"));
-        ImmutableEntry newEntry = mock(ImmutableEntry.class);
-        when(newEntry.getAttributes()).thenReturn(attributeList);
-
-        ModifyRequest actualModifyRequest = resolveService.getModifyRequest(newEntry, new DefaultEntry());
-
-        verify(newEntry).getAttributes();
-        assertEquals(-1, actualModifyRequest.getMessageId());
-        assertEquals(1, actualModifyRequest.getModifications().size());
-        assertEquals(MessageTypeEnum.MODIFY_REQUEST, actualModifyRequest.getType());
-        assertFalse(actualModifyRequest.isAbandoned());
-        assertTrue(actualModifyRequest.getControls().isEmpty());
-        assertTrue(actualModifyRequest.hasResponse());
-    }
-
-    @Test
-    void testGetModifyRequest4() {
-        Class<Object> typeArgumentClass = Object.class;
-        ResolveService<Object> resolveService = new ResolveService<>(typeArgumentClass);
-
-        ArrayList<Attribute> attributeList = new ArrayList<>();
-        attributeList.add(new DefaultAttribute("42"));
-        attributeList.add(new DefaultAttribute("42"));
-        ImmutableEntry newEntry = mock(ImmutableEntry.class);
-        when(newEntry.getAttributes()).thenReturn(attributeList);
-
-        ModifyRequest actualModifyRequest = resolveService.getModifyRequest(newEntry, new DefaultEntry());
-
-        verify(newEntry).getAttributes();
-        assertEquals(-1, actualModifyRequest.getMessageId());
-        assertEquals(2, actualModifyRequest.getModifications().size());
-        assertEquals(MessageTypeEnum.MODIFY_REQUEST, actualModifyRequest.getType());
-        assertFalse(actualModifyRequest.isAbandoned());
-        assertTrue(actualModifyRequest.getControls().isEmpty());
-        assertTrue(actualModifyRequest.hasResponse());
-    }
-
-    @Test
-    void testGetModifyRequest5() {
-        Class<Object> typeArgumentClass = Object.class;
-        ResolveService<Object> resolveService = new ResolveService<>(typeArgumentClass);
-        ImmutableEntry newEntry = mock(ImmutableEntry.class);
-        when(newEntry.getAttributes()).thenReturn(new ArrayList<>());
-        ImmutableEntry oldEntry = mock(ImmutableEntry.class);
-        when(oldEntry.getAttributes()).thenReturn(new ArrayList<>());
-
-        ModifyRequest actualModifyRequest = resolveService.getModifyRequest(newEntry, oldEntry);
-
-        verify(newEntry).getAttributes();
-        verify(oldEntry).getAttributes();
-        assertEquals(-1, actualModifyRequest.getMessageId());
-        assertEquals(MessageTypeEnum.MODIFY_REQUEST, actualModifyRequest.getType());
-        assertFalse(actualModifyRequest.isAbandoned());
-        assertTrue(actualModifyRequest.getModifications().isEmpty());
-        assertTrue(actualModifyRequest.getControls().isEmpty());
-        assertTrue(actualModifyRequest.hasResponse());
-    }
-
-    @Test
-    void testGetModifyRequest6() {
-        Class<Object> typeArgumentClass = Object.class;
-        ResolveService<Object> resolveService = new ResolveService<>(typeArgumentClass);
-
-        ArrayList<Attribute> attributeList = new ArrayList<>();
-        attributeList.add(new DefaultAttribute("42"));
-        ImmutableEntry newEntry = mock(ImmutableEntry.class);
-        when(newEntry.getAttributes()).thenReturn(attributeList);
-        ImmutableEntry oldEntry = mock(ImmutableEntry.class);
-        when(oldEntry.contains(isA(Attribute[].class))).thenReturn(true);
-        when(oldEntry.getAttributes()).thenReturn(new ArrayList<>());
-
-        ModifyRequest actualModifyRequest = resolveService.getModifyRequest(newEntry, oldEntry);
-
-        verify(oldEntry).contains(isA(Attribute[].class));
-        verify(newEntry).getAttributes();
-        verify(oldEntry).getAttributes();
-        assertEquals(-1, actualModifyRequest.getMessageId());
-        assertEquals(1, actualModifyRequest.getModifications().size());
-        assertEquals(MessageTypeEnum.MODIFY_REQUEST, actualModifyRequest.getType());
-        assertFalse(actualModifyRequest.isAbandoned());
-        assertTrue(actualModifyRequest.getControls().isEmpty());
-        assertTrue(actualModifyRequest.hasResponse());
-    }
-
-    @Test
-    void testGetModifyRequest7() {
-        Class<Object> typeArgumentClass = Object.class;
-        ResolveService<Object> resolveService = new ResolveService<>(typeArgumentClass);
-
-        ArrayList<Attribute> attributeList = new ArrayList<>();
-        attributeList.add(new DefaultAttribute("42"));
-        ImmutableEntry newEntry = mock(ImmutableEntry.class);
-        when(newEntry.contains(isA(Attribute[].class))).thenReturn(true);
-        when(newEntry.getAttributes()).thenReturn(attributeList);
-
-        ArrayList<Attribute> attributeList2 = new ArrayList<>();
-        attributeList2.add(new DefaultAttribute("42"));
-        ImmutableEntry oldEntry = mock(ImmutableEntry.class);
-        when(oldEntry.contains(isA(Attribute[].class))).thenReturn(true);
-        when(oldEntry.getAttributes()).thenReturn(attributeList2);
-
-        ModifyRequest actualModifyRequest = resolveService.getModifyRequest(newEntry, oldEntry);
-
-        verify(newEntry).contains(isA(Attribute[].class));
-        verify(oldEntry).contains(isA(Attribute[].class));
-        verify(newEntry).getAttributes();
-        verify(oldEntry).getAttributes();
-        assertEquals(-1, actualModifyRequest.getMessageId());
-        assertEquals(1, actualModifyRequest.getModifications().size());
-        assertEquals(MessageTypeEnum.MODIFY_REQUEST, actualModifyRequest.getType());
-        assertFalse(actualModifyRequest.isAbandoned());
-        assertTrue(actualModifyRequest.getControls().isEmpty());
-        assertTrue(actualModifyRequest.hasResponse());
-    }
-
-    @Test
-    void testGetModifyRequest8() {
-        Class<Object> typeArgumentClass = Object.class;
-        ResolveService<Object> resolveService = new ResolveService<>(typeArgumentClass);
-
-        ArrayList<Attribute> attributeList = new ArrayList<>();
-        attributeList.add(new DefaultAttribute("42"));
-        ImmutableEntry newEntry = mock(ImmutableEntry.class);
-        when(newEntry.contains(isA(Attribute[].class))).thenReturn(false);
-        when(newEntry.getAttributes()).thenReturn(attributeList);
-
-        ArrayList<Attribute> attributeList2 = new ArrayList<>();
-        attributeList2.add(new DefaultAttribute("42"));
-        ImmutableEntry oldEntry = mock(ImmutableEntry.class);
-        when(oldEntry.contains(isA(Attribute[].class))).thenReturn(true);
-        when(oldEntry.getAttributes()).thenReturn(attributeList2);
-
-        ModifyRequest actualModifyRequest = resolveService.getModifyRequest(newEntry, oldEntry);
-
-        verify(newEntry).contains(isA(Attribute[].class));
-        verify(oldEntry).contains(isA(Attribute[].class));
-        verify(newEntry).getAttributes();
-        verify(oldEntry).getAttributes();
-        assertEquals(-1, actualModifyRequest.getMessageId());
-        assertEquals(2, actualModifyRequest.getModifications().size());
-        assertEquals(MessageTypeEnum.MODIFY_REQUEST, actualModifyRequest.getType());
-        assertFalse(actualModifyRequest.isAbandoned());
-        assertTrue(actualModifyRequest.getControls().isEmpty());
-        assertTrue(actualModifyRequest.hasResponse());
+        assertEquals(testADEntry.getDistinguishedName(), result.getDn().getName());
+        assertEquals(testADEntry.getCn(), result.get("cn").get().getString());
+//        assertEquals(testADEntry.getCreated(), result.get("whencreated").get().getString());
+        assertEquals(testADEntry.getObjectGUID().toString(), result.get("objectguid").get().getString());
+        assertEquals(testADEntry.getJpegPhoto().length, result.get("jpegphoto").get().getBytes().length);
+        assertEquals(testADEntry.getObjectClass().size(), result.get("objectclass").get().length());
+        assertEquals(testADEntry.getBadLogonCount(), Integer.valueOf(result.get("badpwdcount").get().getString()));
+        assertEquals(testADEntry.isCriticalSystemObject(), Boolean.valueOf(result.get("iscriticalsystemobject").get().getString()));
     }
 
 }

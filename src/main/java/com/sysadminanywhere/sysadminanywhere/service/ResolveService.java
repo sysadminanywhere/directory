@@ -80,7 +80,7 @@ public class ResolveService<T> {
                         }
 
                         if (field.getType().getName().equalsIgnoreCase(UUID.class.getName())) {
-                            field.set(result, UUID.nameUUIDFromBytes(value.getBytes()));
+                            field.set(result, UUID.fromString(value.getString()));
                         }
 
                         if (field.getType().getName().equalsIgnoreCase(ADSID.class.getName())) {
@@ -104,6 +104,7 @@ public class ResolveService<T> {
         for (Field field : fields) {
             AD property = field.getAnnotation(AD.class);
             if (property != null) {
+                field.setAccessible(true);
                 if (property.name().equalsIgnoreCase("distinguishedname")) {
                     entry.setDn(field.get(item).toString());
                 } else {
@@ -122,6 +123,10 @@ public class ResolveService<T> {
 
                     if (field.getType().getName().equalsIgnoreCase(byte[].class.getName())) {
                         entry.add(property.name(), (byte[]) field.get(item));
+                    }
+
+                    if (field.getType().getName().equalsIgnoreCase(UUID.class.getName())) {
+                        entry.add(property.name(), field.get(item).toString());
                     }
 
                     if (field.getType().getName().equalsIgnoreCase("java.util.List")) {
