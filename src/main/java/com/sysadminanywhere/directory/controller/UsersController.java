@@ -27,6 +27,7 @@ public class UsersController {
     @PostMapping()
     public ResponseEntity<UserEntry> addUser(@RequestBody AddUserDto addUser) {
         UserEntry user = new UserEntry();
+        user.setCn(addUser.getCn());
         user.setDisplayName(addUser.getDisplayName());
         user.setInitials(addUser.getInitials());
         user.setFirstName(addUser.getFirstName());

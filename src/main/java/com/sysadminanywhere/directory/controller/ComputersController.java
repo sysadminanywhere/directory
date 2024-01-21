@@ -1,5 +1,6 @@
 package com.sysadminanywhere.directory.controller;
 
+import com.sysadminanywhere.directory.controller.dto.AddComputerDto;
 import com.sysadminanywhere.directory.model.ComputerEntry;
 import com.sysadminanywhere.directory.service.ComputersService;
 import org.springframework.http.HttpStatus;
@@ -24,8 +25,14 @@ public class ComputersController {
     }
 
     @PostMapping()
-    public ResponseEntity<ComputerEntry> addComputer(@RequestBody ComputerEntry computer){
-        return new ResponseEntity<>(computersService.add(computer), HttpStatus.OK);
+    public ResponseEntity<ComputerEntry> addComputer(@RequestBody AddComputerDto addComputer){
+        ComputerEntry computer = new ComputerEntry();
+        computer.setCn(addComputer.getCn());
+        computer.setDescription(addComputer.getDescription());
+        computer.setLocation(addComputer.getLocation());
+        computer.setSamAccountName(addComputer.getSAMAccountName());
+
+        return new ResponseEntity<>(computersService.add(addComputer.getDistinguishedName(), computer), HttpStatus.OK);
     }
 
 }

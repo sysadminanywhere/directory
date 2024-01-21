@@ -36,9 +36,27 @@ public class ComputersService {
             return null;
     }
 
-    public ComputerEntry add(ComputerEntry computer) {
-        ldapService.add(null);
-        return new ComputerEntry();
+    @SneakyThrows
+    public ComputerEntry add(String distinguishedName, ComputerEntry computer) {
+        String dn;
+
+        if(distinguishedName.isEmpty()) {
+            dn = "cn=" + computer.getCn() + "," + ldapService.getComputersContainer();
+        } else {
+            dn = "cn=" + computer.getCn() + "," + distinguishedName;
+        }
+
+        Entry entry = new DefaultEntry(
+                dn,
+                "description", computer.getDescription(),
+                "location", computer.getLocation(),
+                "sAMAccountName", computer.getSamAccountName(),
+                "objectclass:computer",
+                "cn", computer.getCn()
+        );
+
+        ldapService.add(entry);
+        return getByCN(computer.getCn());
     }
 
     public ComputerEntry update(ComputerEntry computer) {

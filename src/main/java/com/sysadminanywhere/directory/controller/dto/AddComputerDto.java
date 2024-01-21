@@ -7,14 +7,10 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AddUserDto {
+public class AddComputerDto {
     private String distinguishedName;
     private String cn;
-    private String displayName;
-    private String initials;
-    private String firstName;
-    private String lastName;
+    private String description;
+    private String location;
     private String sAMAccountName;
-    private String userPrincipalName;
-    private String password;
 }
