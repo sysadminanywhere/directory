@@ -36,9 +36,27 @@ public class GroupsService {
             return null;
     }
 
-    public GroupEntry add(GroupEntry group) {
-        ldapService.add(null);
-        return new GroupEntry();
+    @SneakyThrows
+    public GroupEntry add(String distinguishedName, GroupEntry group) {
+        String dn;
+
+        if(distinguishedName.isEmpty()) {
+            dn = "cn=" + group.getCn() + "," + ldapService.getUsersContainer();
+        } else {
+            dn = "cn=" + group.getCn() + "," + distinguishedName;
+        }
+
+        Entry entry = new DefaultEntry(
+                dn,
+                "description", group.getDescription(),
+                "groupType", group.getGroupType(),
+                "sAMAccountName", group.getSamAccountName(),
+                "objectclass:group",
+                "cn", group.getCn()
+        );
+
+        ldapService.add(entry);
+        return getByCN(group.getCn());
     }
 
     public GroupEntry update(GroupEntry group) {

@@ -1,5 +1,6 @@
 package com.sysadminanywhere.directory.controller;
 
+import com.sysadminanywhere.directory.controller.dto.AddGroupDto;
 import com.sysadminanywhere.directory.model.GroupEntry;
 import com.sysadminanywhere.directory.service.GroupsService;
 import org.springframework.http.HttpStatus;
@@ -24,8 +25,8 @@ public class GroupsController {
     }
 
     @PostMapping()
-    public ResponseEntity<GroupEntry> addGroup(@RequestBody GroupEntry group){
-        return new ResponseEntity<>(groupsService.add(group), HttpStatus.OK);
+    public ResponseEntity<GroupEntry> addGroup(@RequestBody AddGroupDto addGroup) {
+        return new ResponseEntity<>(groupsService.add(addGroup.getDistinguishedName(), addGroup.getGroup()), HttpStatus.OK);
     }
 
 }

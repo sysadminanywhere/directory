@@ -36,9 +36,29 @@ public class ContactsService {
             return null;
     }
 
-    public ContactEntry add(ContactEntry contact) {
-        ldapService.add(null);
-        return null;
+    @SneakyThrows
+    public ContactEntry add(String distinguishedName, ContactEntry contact) {
+        String dn;
+
+        if(distinguishedName.isEmpty()) {
+            dn = "cn=" + contact.getCn() + "," + ldapService.getUsersContainer();
+        } else {
+            dn = "cn=" + contact.getCn() + "," + distinguishedName;
+        }
+
+        Entry entry = new DefaultEntry(
+                dn,
+                "displayName", contact.getDisplayName(),
+                "initials", contact.getInitials(),
+                "givenName", contact.getFirstName(),
+                "sn", contact.getLastName(),
+                "objectclass:person",
+                "objectclass:person",
+                "cn", contact.getCn()
+        );
+
+        ldapService.add(entry);
+        return getByCN(contact.getCn());
     }
 
     public ContactEntry update(ContactEntry contact) {

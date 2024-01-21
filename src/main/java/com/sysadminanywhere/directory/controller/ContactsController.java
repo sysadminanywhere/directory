@@ -1,6 +1,8 @@
 package com.sysadminanywhere.directory.controller;
 
+import com.sysadminanywhere.directory.controller.dto.AddContactDto;
 import com.sysadminanywhere.directory.model.ContactEntry;
+import com.sysadminanywhere.directory.model.UserEntry;
 import com.sysadminanywhere.directory.service.ContactsService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,8 +26,8 @@ public class ContactsController {
     }
 
     @PostMapping()
-    public ResponseEntity<ContactEntry> addContact(@RequestBody ContactEntry contact){
-        return new ResponseEntity<>(contactsService.add(contact), HttpStatus.OK);
+    public ResponseEntity<ContactEntry> addContact(@RequestBody AddContactDto addContact){
+        return new ResponseEntity<>(contactsService.add(addContact.getDistinguishedName(), addContact.getContact()), HttpStatus.OK);
     }
 
 }

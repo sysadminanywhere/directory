@@ -26,13 +26,7 @@ public class ComputersController {
 
     @PostMapping()
     public ResponseEntity<ComputerEntry> addComputer(@RequestBody AddComputerDto addComputer){
-        ComputerEntry computer = new ComputerEntry();
-        computer.setCn(addComputer.getCn());
-        computer.setDescription(addComputer.getDescription());
-        computer.setLocation(addComputer.getLocation());
-        computer.setSamAccountName(addComputer.getSAMAccountName());
-
-        return new ResponseEntity<>(computersService.add(addComputer.getDistinguishedName(), computer), HttpStatus.OK);
+        return new ResponseEntity<>(computersService.add(addComputer.getDistinguishedName(), addComputer.getComputer()), HttpStatus.OK);
     }
 
 }
