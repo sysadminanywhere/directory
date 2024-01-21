@@ -1,9 +1,11 @@
 package com.sysadminanywhere.directory.service;
 
 import com.sysadminanywhere.directory.model.GroupEntry;
+import com.sysadminanywhere.directory.model.GroupScope;
 import lombok.SneakyThrows;
 import org.apache.directory.api.ldap.model.entry.DefaultEntry;
 import org.apache.directory.api.ldap.model.entry.Entry;
+import org.apache.directory.api.ldap.model.message.ModifyRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,7 +39,7 @@ public class GroupsService {
     }
 
     @SneakyThrows
-    public GroupEntry add(String distinguishedName, GroupEntry group) {
+    public GroupEntry add(String distinguishedName, GroupEntry group, GroupScope groupScope, boolean isSecurity) {
         String dn;
 
         if(distinguishedName.isEmpty()) {
@@ -60,12 +62,15 @@ public class GroupsService {
     }
 
     public GroupEntry update(GroupEntry group) {
-        return new GroupEntry();
+        ModifyRequest modifyRequest = resolveService.getModifyRequest(group, getByCN(group.getCn()));
+        ldapService.update(modifyRequest);
+
+        return getByCN(group.getCn());
     }
 
     @SneakyThrows
-    public void delete(GroupEntry group) {
-        Entry entry = new DefaultEntry(group.getDistinguishedName());
+    public void delete(String distinguishedName) {
+        Entry entry = new DefaultEntry(distinguishedName);
         ldapService.delete(entry);
     }
 

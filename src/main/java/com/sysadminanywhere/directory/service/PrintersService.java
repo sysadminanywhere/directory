@@ -37,8 +37,8 @@ public class PrintersService {
     }
 
     @SneakyThrows
-    public void delete(PrinterEntry printer) {
-        Entry entry = new DefaultEntry(printer.getDistinguishedName());
+    public void delete(String distinguishedName) {
+        Entry entry = new DefaultEntry(distinguishedName);
         ldapService.delete(entry);
     }
 

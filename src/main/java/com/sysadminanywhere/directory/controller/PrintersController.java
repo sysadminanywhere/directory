@@ -1,5 +1,6 @@
 package com.sysadminanywhere.directory.controller;
 
+import com.sysadminanywhere.directory.model.ComputerEntry;
 import com.sysadminanywhere.directory.model.PrinterEntry;
 import com.sysadminanywhere.directory.service.PrintersService;
 import org.springframework.http.HttpStatus;
@@ -19,8 +20,15 @@ public class PrintersController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<PrinterEntry>> getPrinters() {
+    public ResponseEntity<List<PrinterEntry>> getAll() {
         return new ResponseEntity<>(printersService.getAll(), HttpStatus.OK);
     }
+
+    @DeleteMapping()
+    public ResponseEntity delete(@RequestParam String distinguishedName) {
+        printersService.delete(distinguishedName);
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
 
 }

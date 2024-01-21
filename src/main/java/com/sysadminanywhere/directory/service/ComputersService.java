@@ -4,6 +4,7 @@ import com.sysadminanywhere.directory.model.ComputerEntry;
 import lombok.SneakyThrows;
 import org.apache.directory.api.ldap.model.entry.DefaultEntry;
 import org.apache.directory.api.ldap.model.entry.Entry;
+import org.apache.directory.api.ldap.model.message.ModifyRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,7 +38,7 @@ public class ComputersService {
     }
 
     @SneakyThrows
-    public ComputerEntry add(String distinguishedName, ComputerEntry computer) {
+    public ComputerEntry add(String distinguishedName, ComputerEntry computer, boolean isEnabled) {
         String dn;
 
         if(distinguishedName.isEmpty()) {
@@ -60,12 +61,15 @@ public class ComputersService {
     }
 
     public ComputerEntry update(ComputerEntry computer) {
-        return new ComputerEntry();
+        ModifyRequest modifyRequest = resolveService.getModifyRequest(computer, getByCN(computer.getCn()));
+        ldapService.update(modifyRequest);
+
+        return getByCN(computer.getCn());
     }
 
     @SneakyThrows
-    public void delete(ComputerEntry computer) {
-        Entry entry = new DefaultEntry(computer.getDistinguishedName());
+    public void delete(String distinguishedName) {
+        Entry entry = new DefaultEntry(distinguishedName);
         ldapService.delete(entry);
     }
 

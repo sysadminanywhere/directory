@@ -1,6 +1,6 @@
 package com.sysadminanywhere.directory.model;
 
-public enum GroupScopes {
+public enum GroupScope {
     Local,
     Global,
     Universal

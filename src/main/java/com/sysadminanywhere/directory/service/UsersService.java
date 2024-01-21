@@ -37,7 +37,13 @@ public class UsersService {
     }
 
     @SneakyThrows
-    public UserEntry add(String distinguishedName, UserEntry user, String password) {
+    public UserEntry add(String distinguishedName,
+                         UserEntry user,
+                         String password,
+                         boolean isCannotChangePassword,
+                         boolean isPasswordNeverExpires,
+                         boolean isAccountDisabled,
+                         boolean isMustChangePassword) {
 
         if (user.getUserPrincipalName().isEmpty())
             user.setUserPrincipalName(user.getSamAccountName() + "@" + ldapService.DomainName());
@@ -78,8 +84,8 @@ public class UsersService {
     }
 
     @SneakyThrows
-    public void delete(UserEntry user) {
-        Entry entry = new DefaultEntry(user.getDistinguishedName());
+    public void delete(String distinguishedName) {
+        Entry entry = new DefaultEntry(distinguishedName);
         ldapService.delete(entry);
     }
 

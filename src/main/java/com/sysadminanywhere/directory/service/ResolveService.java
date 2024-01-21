@@ -140,6 +140,10 @@ public class ResolveService<T> {
         return entry;
     }
 
+    public ModifyRequest getModifyRequest(T newEntry, T oldEntry) {
+        return getModifyRequest(getEntry(newEntry), getEntry(oldEntry));
+    }
+
     public ModifyRequest getModifyRequest(Entry newEntry, Entry oldEntry) {
         ModifyRequest modifyRequest = new ModifyRequestImpl();
 

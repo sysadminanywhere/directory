@@ -4,6 +4,7 @@ import com.sysadminanywhere.directory.model.ContactEntry;
 import lombok.SneakyThrows;
 import org.apache.directory.api.ldap.model.entry.DefaultEntry;
 import org.apache.directory.api.ldap.model.entry.Entry;
+import org.apache.directory.api.ldap.model.message.ModifyRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -62,12 +63,15 @@ public class ContactsService {
     }
 
     public ContactEntry update(ContactEntry contact) {
-        return new ContactEntry();
+        ModifyRequest modifyRequest = resolveService.getModifyRequest(contact, getByCN(contact.getCn()));
+        ldapService.update(modifyRequest);
+
+        return getByCN(contact.getCn());
     }
 
     @SneakyThrows
-    public void delete(ContactEntry contact) {
-        Entry entry = new DefaultEntry(contact.getDistinguishedName());
+    public void delete(String distinguishedName) {
+        Entry entry = new DefaultEntry(distinguishedName);
         ldapService.delete(entry);
     }
 

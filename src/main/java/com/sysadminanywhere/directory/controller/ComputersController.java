@@ -20,13 +20,28 @@ public class ComputersController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<ComputerEntry>> getComputers() {
+    public ResponseEntity<List<ComputerEntry>> getAll() {
         return new ResponseEntity<>(computersService.getAll(), HttpStatus.OK);
     }
 
     @PostMapping()
-    public ResponseEntity<ComputerEntry> addComputer(@RequestBody AddComputerDto addComputer){
-        return new ResponseEntity<>(computersService.add(addComputer.getDistinguishedName(), addComputer.getComputer()), HttpStatus.OK);
+    public ResponseEntity<ComputerEntry> add(@RequestBody AddComputerDto addComputer) {
+        return new ResponseEntity<>(computersService.add(
+                addComputer.getDistinguishedName(),
+                addComputer.getComputer(),
+                addComputer.isEnabled()
+        ), HttpStatus.OK);
+    }
+
+    @PutMapping()
+    public ResponseEntity<ComputerEntry> update(@RequestBody ComputerEntry computer) {
+        return new ResponseEntity<>(computersService.update(computer), HttpStatus.OK);
+    }
+
+    @DeleteMapping()
+    public ResponseEntity delete(@RequestParam String distinguishedName) {
+        computersService.delete(distinguishedName);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
 }
