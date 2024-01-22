@@ -1,6 +1,7 @@
 package com.sysadminanywhere.directory.service;
 
 import com.sysadminanywhere.directory.model.ComputerEntry;
+import com.sysadminanywhere.directory.model.UserAccountControls;
 import lombok.SneakyThrows;
 import org.apache.directory.api.ldap.model.entry.DefaultEntry;
 import org.apache.directory.api.ldap.model.entry.Entry;
@@ -41,11 +42,14 @@ public class ComputersService {
     public ComputerEntry add(String distinguishedName, ComputerEntry computer, boolean isEnabled) {
         String dn;
 
-        if(distinguishedName.isEmpty()) {
+        if (distinguishedName.isEmpty()) {
             dn = "cn=" + computer.getCn() + "," + ldapService.getComputersContainer();
         } else {
             dn = "cn=" + computer.getCn() + "," + distinguishedName;
         }
+
+        if (computer.getSamAccountName().isEmpty())
+            computer.setSamAccountName(computer.getCn());
 
         Entry entry = new DefaultEntry(
                 dn,
@@ -57,7 +61,22 @@ public class ComputersService {
         );
 
         ldapService.add(entry);
-        return getByCN(computer.getCn());
+
+        ComputerEntry newComputer = getByCN(computer.getCn());
+
+        int userAccountControl = newComputer.getUserAccountControl();
+
+        if (!isEnabled) {
+            if ((userAccountControl & UserAccountControls.ACCOUNTDISABLE.getValue()) != UserAccountControls.ACCOUNTDISABLE.getValue())
+                userAccountControl = userAccountControl & UserAccountControls.ACCOUNTDISABLE.getValue();
+        } else {
+            if ((userAccountControl & UserAccountControls.ACCOUNTDISABLE.getValue()) == UserAccountControls.ACCOUNTDISABLE.getValue())
+                userAccountControl = userAccountControl & ~UserAccountControls.ACCOUNTDISABLE.getValue();
+        }
+
+        ldapService.updateProperty(newComputer.getDistinguishedName(),"userAccountControl", String.valueOf(userAccountControl));
+
+        return newComputer;
     }
 
     public ComputerEntry update(ComputerEntry computer) {
@@ -71,6 +90,10 @@ public class ComputersService {
     public void delete(String distinguishedName) {
         Entry entry = new DefaultEntry(distinguishedName);
         ldapService.delete(entry);
+    }
+
+    public UserAccountControls getUserControl(int userAccountControl) {
+        return UserAccountControls.fromValue(userAccountControl);
     }
 
 }

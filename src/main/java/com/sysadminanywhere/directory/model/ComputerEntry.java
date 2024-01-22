@@ -1,8 +1,6 @@
 package com.sysadminanywhere.directory.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -87,18 +85,6 @@ public class ComputerEntry {
 
     @AD(name = "useraccountcontrol")
     private int userAccountControl;
-
-//    private UserAccountControls UserControl
-//    {
-//        get
-//        {
-//            return (UserAccountControls)UserAccountControl;
-//        }
-//        set
-//        {
-//            UserAccountControl = (int)value;
-//        }
-//    }
 
     @AD(name = "msds-supportedencryptiontypes")
     private int msdsSupportedEncryptionTypes;

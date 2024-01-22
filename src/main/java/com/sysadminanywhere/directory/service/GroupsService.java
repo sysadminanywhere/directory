@@ -2,6 +2,7 @@ package com.sysadminanywhere.directory.service;
 
 import com.sysadminanywhere.directory.model.GroupEntry;
 import com.sysadminanywhere.directory.model.GroupScope;
+import com.sysadminanywhere.directory.model.GroupType;
 import lombok.SneakyThrows;
 import org.apache.directory.api.ldap.model.entry.DefaultEntry;
 import org.apache.directory.api.ldap.model.entry.Entry;
@@ -48,12 +49,18 @@ public class GroupsService {
             dn = "cn=" + group.getCn() + "," + distinguishedName;
         }
 
+        if (group.getSamAccountName().isEmpty())
+            group.setSamAccountName(group.getCn());
+
+        group.setGroupType(getGroupType(groupScope, isSecurity));
+
         Entry entry = new DefaultEntry(
                 dn,
                 "description", group.getDescription(),
                 "groupType", group.getGroupType(),
                 "sAMAccountName", group.getSamAccountName(),
                 "objectclass:group",
+                "groupType", String.valueOf(group.getGroupType()),
                 "cn", group.getCn()
         );
 
@@ -72,6 +79,47 @@ public class GroupsService {
     public void delete(String distinguishedName) {
         Entry entry = new DefaultEntry(distinguishedName);
         ldapService.delete(entry);
+    }
+
+    public String getGroupTypeName(long groupType)
+    {
+        if (groupType == 2L) {
+            return "Global distribution group";
+        } else if (groupType == 4L) {
+            return "Domain local distribution group";
+        } else if (groupType == 8L) {
+            return "Universal distribution group";
+        } else if (groupType == -2147483646L) {
+            return "Global security group";
+        } else if (groupType == -2147483644L) {
+            return "Domain local security group";
+        } else if (groupType == -2147483640L) {
+            return "Universal security group";
+        } else if (groupType == -2147483643L) {
+            return "BuiltIn Group";
+        }
+        return "";
+    }
+
+    public long getGroupType(GroupScope groupScope, boolean isSecurity)
+    {
+        long groupType = 0;
+        if (isSecurity) {
+            if (groupScope == GroupScope.Global)
+                groupType = (GroupType.GLOBAL.getValue() | GroupType.SECURITY.getValue());
+            if (groupScope == GroupScope.Local)
+                groupType = (GroupType.DOMAIN_LOCAL.getValue() | GroupType.SECURITY.getValue());
+            if (groupScope == GroupScope.Universal)
+                groupType = (GroupType.UNIVERSAL.getValue() | GroupType.SECURITY.getValue());
+        } else {
+            if (groupScope == GroupScope.Global)
+                groupType = GroupType.GLOBAL.getValue();
+            if (groupScope == GroupScope.Local)
+                groupType = GroupType.DOMAIN_LOCAL.getValue();
+            if (groupScope == GroupScope.Universal)
+                groupType = GroupType.UNIVERSAL.getValue();
+        }
+        return groupType;
     }
 
 }

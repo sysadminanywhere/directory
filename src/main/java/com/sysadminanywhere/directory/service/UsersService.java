@@ -1,5 +1,6 @@
 package com.sysadminanywhere.directory.service;
 
+import com.sysadminanywhere.directory.model.UserAccountControls;
 import com.sysadminanywhere.directory.model.UserEntry;
 import lombok.SneakyThrows;
 import org.apache.directory.api.ldap.model.entry.DefaultEntry;
@@ -45,6 +46,9 @@ public class UsersService {
                          boolean isAccountDisabled,
                          boolean isMustChangePassword) {
 
+        if (user.getSamAccountName().isEmpty())
+            user.setSamAccountName(user.getCn());
+
         if (user.getUserPrincipalName().isEmpty())
             user.setUserPrincipalName(user.getSamAccountName() + "@" + ldapService.DomainName());
 
@@ -71,7 +75,40 @@ public class UsersService {
         );
 
         ldapService.add(entry);
-        return getByCN(user.getCn());
+
+        UserEntry newUser = getByCN(user.getCn());
+
+        ChangeUserAccountControlAsync(newUser, isCannotChangePassword, isPasswordNeverExpires, isAccountDisabled);
+
+        if (isMustChangePassword)
+            MustChangePasswordAsync(newUser);
+
+        return newUser;
+    }
+
+    private void ChangeUserAccountControlAsync(UserEntry user, boolean isCannotChangePassword, boolean isPasswordNeverExpires, boolean isAccountDisabled) {
+        int userAccountControl = user.getUserAccountControl();
+
+        if (isCannotChangePassword)
+            userAccountControl = userAccountControl | UserAccountControls.PASSWD_CANT_CHANGE.getValue();
+        else
+            userAccountControl = userAccountControl & ~UserAccountControls.PASSWD_CANT_CHANGE.getValue();
+
+        if (isPasswordNeverExpires)
+            userAccountControl = userAccountControl | UserAccountControls.DONT_EXPIRE_PASSWD.getValue();
+        else
+            userAccountControl = userAccountControl & ~UserAccountControls.DONT_EXPIRE_PASSWD.getValue();
+
+        if (isAccountDisabled)
+            userAccountControl = userAccountControl | UserAccountControls.ACCOUNTDISABLE.getValue();
+        else
+            userAccountControl = userAccountControl & ~UserAccountControls.ACCOUNTDISABLE.getValue();
+
+        ldapService.updateProperty(user.getDistinguishedName(),"userAccountControl", String.valueOf(userAccountControl));
+    }
+
+    private void MustChangePasswordAsync(UserEntry user) {
+        ldapService.updateProperty(user.getDistinguishedName(),"pwdlastset", "0");
     }
 
     @SneakyThrows
@@ -87,6 +124,10 @@ public class UsersService {
     public void delete(String distinguishedName) {
         Entry entry = new DefaultEntry(distinguishedName);
         ldapService.delete(entry);
+    }
+
+    public UserAccountControls getUserControl(int userAccountControl) {
+        return UserAccountControls.fromValue(userAccountControl);
     }
 
 }

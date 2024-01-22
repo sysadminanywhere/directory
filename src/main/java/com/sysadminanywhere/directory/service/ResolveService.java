@@ -146,6 +146,7 @@ public class ResolveService<T> {
 
     public ModifyRequest getModifyRequest(Entry newEntry, Entry oldEntry) {
         ModifyRequest modifyRequest = new ModifyRequestImpl();
+        modifyRequest.setName(newEntry.getDn());
 
         for (Attribute attribute : newEntry.getAttributes()) {
             if (oldEntry.contains(attribute)) {

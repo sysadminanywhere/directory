@@ -2,8 +2,7 @@ package com.sysadminanywhere.directory.service;
 
 import lombok.SneakyThrows;
 import org.apache.directory.api.ldap.model.cursor.SearchCursor;
-import org.apache.directory.api.ldap.model.entry.Entry;
-import org.apache.directory.api.ldap.model.entry.Value;
+import org.apache.directory.api.ldap.model.entry.*;
 import org.apache.directory.api.ldap.model.exception.LdapException;
 import org.apache.directory.api.ldap.model.message.*;
 import org.apache.directory.api.ldap.model.message.controls.*;
@@ -131,20 +130,18 @@ public class LdapService {
         connection.delete(entry.getDn());
     }
 
-    public String getComputersContainer()
-    {
+    public String getComputersContainer() {
         Optional<String> result = getWellKnownObjects().stream().filter(c -> c.startsWith(ContainerComputers)).findFirst();
-        if(result.isPresent())
-            return result.get().replace(ContainerComputers,"");
+        if (result.isPresent())
+            return result.get().replace(ContainerComputers, "");
         else
             return "";
     }
 
-    public String getUsersContainer()
-    {
+    public String getUsersContainer() {
         Optional<String> result = getWellKnownObjects().stream().filter(c -> c.startsWith(ContainerUsers)).findFirst();
-        if(result.isPresent())
-            return result.get().replace(ContainerUsers,"");
+        if (result.isPresent())
+            return result.get().replace(ContainerUsers, "");
         else
             return "";
     }
@@ -155,13 +152,20 @@ public class LdapService {
         List<Entry> result = search("(objectclass=domain)", SearchScope.ONELEVEL);
         Optional<Entry> entry = result.stream().findFirst();
 
-        if(entry.isPresent()) {
+        if (entry.isPresent()) {
             for (Value v : entry.get().get("wellknownobjects")) {
                 list.add(v.getString());
             }
         }
 
         return list;
+    }
+
+    @SneakyThrows
+    public void updateProperty(String dn, String name, String value) {
+        Attribute attribute = new DefaultAttribute(name, value);
+        Modification modification = new DefaultModification(ModificationOperation.REPLACE_ATTRIBUTE, attribute);
+        connection.modify(dn, modification);
     }
 
 }

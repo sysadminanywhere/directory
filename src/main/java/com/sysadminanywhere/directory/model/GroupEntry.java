@@ -79,12 +79,4 @@ public class GroupEntry {
     @AD(name = "primarygroupid")
     private int primaryGroupId;
 
-//    private String ADGroupType
-//    {
-//        get
-//        {
-//            return ADHelper.GetGroupType(GroupType);
-//        }
-//    }
-
 }

@@ -166,18 +166,6 @@ public class UserEntry {
     @AD(name = "useraccountcontrol")
     private int userAccountControl;
 
-//    private UserAccountControls UserControl
-//    {
-//        get
-//        {
-//            return (UserAccountControls)UserAccountControl;
-//        }
-//        set
-//        {
-//            UserAccountControl = (int)value;
-//        }
-//    }
-
     @AD(name = "iscriticalsystemobject")
     private boolean isCriticalSystemObject;
 
