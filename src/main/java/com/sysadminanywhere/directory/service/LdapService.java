@@ -118,6 +118,7 @@ public class LdapService {
     public void add(Entry entry) {
         AddRequest addRequest = new AddRequestImpl();
         addRequest.setEntry(entry);
+        addRequest.addControl(new ManageDsaITImpl());
 
         connection.add(addRequest);
     }

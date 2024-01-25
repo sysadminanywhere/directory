@@ -27,7 +27,7 @@ public class PrintersService {
     }
 
     public PrinterEntry getByCN(String cn) {
-        List<Entry> result = ldapService.search("(&(objectClass=computer)(cn=" + cn + "))");
+        List<Entry> result = ldapService.search("(&(objectClass=printQueue)(cn=" + cn + "))");
         Optional<Entry> entry = result.stream().findFirst();
 
         if (entry.isPresent())

@@ -30,7 +30,7 @@ public class GroupsService {
     }
 
     public GroupEntry getByCN(String cn) {
-        List<Entry> result = ldapService.search("(&(objectClass=computer)(cn=" + cn + "))");
+        List<Entry> result = ldapService.search("(&(objectClass=group)(cn=" + cn + "))");
         Optional<Entry> entry = result.stream().findFirst();
 
         if (entry.isPresent())
@@ -57,9 +57,8 @@ public class GroupsService {
         Entry entry = new DefaultEntry(
                 dn,
                 "description", group.getDescription(),
-                "groupType", group.getGroupType(),
                 "sAMAccountName", group.getSamAccountName(),
-                "objectclass:group",
+                "objectClass:group",
                 "groupType", String.valueOf(group.getGroupType()),
                 "cn", group.getCn()
         );

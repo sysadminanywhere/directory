@@ -56,7 +56,7 @@ public class ComputersService {
                 "description", computer.getDescription(),
                 "location", computer.getLocation(),
                 "sAMAccountName", computer.getSamAccountName(),
-                "objectclass:computer",
+                "objectClass:computer",
                 "cn", computer.getCn()
         );
 

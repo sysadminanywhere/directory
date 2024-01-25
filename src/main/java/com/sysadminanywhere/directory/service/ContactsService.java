@@ -4,6 +4,7 @@ import com.sysadminanywhere.directory.model.ContactEntry;
 import lombok.SneakyThrows;
 import org.apache.directory.api.ldap.model.entry.DefaultEntry;
 import org.apache.directory.api.ldap.model.entry.Entry;
+import org.apache.directory.api.ldap.model.message.LdapResult;
 import org.apache.directory.api.ldap.model.message.ModifyRequest;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +29,7 @@ public class ContactsService {
     }
 
     public ContactEntry getByCN(String cn) {
-        List<Entry> result = ldapService.search("(&(objectClass=computer)(cn=" + cn + "))");
+        List<Entry> result = ldapService.search("(&(objectClass=contact)(objectCategory=person)(cn=" + cn + "))");
         Optional<Entry> entry = result.stream().findFirst();
 
         if (entry.isPresent())
@@ -53,12 +54,13 @@ public class ContactsService {
                 "initials", contact.getInitials(),
                 "givenName", contact.getFirstName(),
                 "sn", contact.getLastName(),
-                "objectclass:person",
-                "objectclass:person",
+                "objectClass:contact",
+                "objectClass:person",
                 "cn", contact.getCn()
         );
 
         ldapService.add(entry);
+
         return getByCN(contact.getCn());
     }
 

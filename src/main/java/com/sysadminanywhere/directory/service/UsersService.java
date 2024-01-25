@@ -5,6 +5,7 @@ import com.sysadminanywhere.directory.model.UserEntry;
 import lombok.SneakyThrows;
 import org.apache.directory.api.ldap.model.entry.DefaultEntry;
 import org.apache.directory.api.ldap.model.entry.Entry;
+import org.apache.directory.api.ldap.model.message.LdapResult;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,7 +29,7 @@ public class UsersService {
     }
 
     public UserEntry getByCN(String cn) {
-        List<Entry> result = ldapService.search("(&(objectClass=computer)(cn=" + cn + "))");
+        List<Entry> result = ldapService.search("(&(objectClass=user)(objectCategory=person)(cn=" + cn + "))");
         Optional<Entry> entry = result.stream().findFirst();
 
         if (entry.isPresent())
@@ -68,8 +69,8 @@ public class UsersService {
                 "sn", user.getLastName(),
                 "sAMAccountName", user.getSamAccountName(),
                 "userPrincipalName", user.getUserPrincipalName(),
-                "objectclass:user",
-                "objectclass:person",
+                "objectClass:user",
+                "objectClass:person",
                 "cn", user.getCn(),
                 "userPassword", password
         );
