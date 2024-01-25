@@ -49,7 +49,7 @@ public class UsersService {
         if (user.getSamAccountName() == null || user.getSamAccountName().isEmpty())
             user.setSamAccountName(user.getCn());
 
-        if (user.getUserPrincipalName() != null || user.getUserPrincipalName().isEmpty())
+        if (user.getUserPrincipalName() == null || user.getUserPrincipalName().isEmpty())
             user.setUserPrincipalName(user.getSamAccountName() + "@" + ldapService.DomainName());
 
         String dn;
