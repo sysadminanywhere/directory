@@ -107,32 +107,35 @@ public class ResolveService<T> {
                     entry.setDn(field.get(item).toString());
                 } else {
 
-                    if (field.getType().getName().equalsIgnoreCase(String.class.getName())) {
-                        entry.add(property.name(), field.get(item).toString());
-                    }
+                    if(field.get(item) != null) {
 
-                    if (field.getType().getName().equalsIgnoreCase(int.class.getName())) {
-                        entry.add(property.name(), field.get(item).toString());
-                    }
-
-                    if (field.getType().getName().equalsIgnoreCase(boolean.class.getName())) {
-                        entry.add(property.name(), field.get(item).toString());
-                    }
-
-                    if (field.getType().getName().equalsIgnoreCase(byte[].class.getName())) {
-                        entry.add(property.name(), (byte[]) field.get(item));
-                    }
-
-                    if (field.getType().getName().equalsIgnoreCase(UUID.class.getName())) {
-                        entry.add(property.name(), field.get(item).toString());
-                    }
-
-                    if (field.getType().getName().equalsIgnoreCase("java.util.List")) {
-                        for (String s : (List<String>)field.get(item)) {
-                            entry.add(property.name(), s);
+                        if (field.getType().getName().equalsIgnoreCase(String.class.getName())) {
+                            entry.add(property.name(), field.get(item).toString());
                         }
-                    }
 
+                        if (field.getType().getName().equalsIgnoreCase(int.class.getName())) {
+                            entry.add(property.name(), field.get(item).toString());
+                        }
+
+                        if (field.getType().getName().equalsIgnoreCase(boolean.class.getName())) {
+                            entry.add(property.name(), field.get(item).toString());
+                        }
+
+                        if (field.getType().getName().equalsIgnoreCase(byte[].class.getName())) {
+                            entry.add(property.name(), (byte[]) field.get(item));
+                        }
+
+                        if (field.getType().getName().equalsIgnoreCase(UUID.class.getName())) {
+                            entry.add(property.name(), field.get(item).toString());
+                        }
+
+                        if (field.getType().getName().equalsIgnoreCase("java.util.List")) {
+                            for (String s : (List<String>) field.get(item)) {
+                                entry.add(property.name(), s);
+                            }
+                        }
+
+                    }
                 }
             }
         }
