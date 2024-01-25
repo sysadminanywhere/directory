@@ -78,7 +78,7 @@ public class ResolveService<T> {
                         }
 
                         if (field.getType().getName().equalsIgnoreCase(UUID.class.getName())) {
-                            field.set(result, UUID.fromString(value.getString()));
+                            field.set(result, UUID.nameUUIDFromBytes(value.getBytes()));
                         }
 
                         if (field.getType().getName().equalsIgnoreCase(ADSID.class.getName())) {

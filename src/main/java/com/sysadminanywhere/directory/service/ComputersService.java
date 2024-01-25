@@ -48,7 +48,7 @@ public class ComputersService {
             dn = "cn=" + computer.getCn() + "," + distinguishedName;
         }
 
-        if (computer.getSamAccountName().isEmpty())
+        if (computer.getSamAccountName() == null || computer.getSamAccountName().isEmpty())
             computer.setSamAccountName(computer.getCn());
 
         Entry entry = new DefaultEntry(

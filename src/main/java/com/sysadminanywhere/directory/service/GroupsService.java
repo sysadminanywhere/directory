@@ -49,7 +49,7 @@ public class GroupsService {
             dn = "cn=" + group.getCn() + "," + distinguishedName;
         }
 
-        if (group.getSamAccountName().isEmpty())
+        if (group.getSamAccountName() == null || group.getSamAccountName().isEmpty())
             group.setSamAccountName(group.getCn());
 
         group.setGroupType(getGroupType(groupScope, isSecurity));

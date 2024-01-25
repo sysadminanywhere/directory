@@ -46,10 +46,10 @@ public class UsersService {
                          boolean isAccountDisabled,
                          boolean isMustChangePassword) {
 
-        if (user.getSamAccountName().isEmpty())
+        if (user.getSamAccountName() == null || user.getSamAccountName().isEmpty())
             user.setSamAccountName(user.getCn());
 
-        if (user.getUserPrincipalName().isEmpty())
+        if (user.getUserPrincipalName() != null || user.getUserPrincipalName().isEmpty())
             user.setUserPrincipalName(user.getSamAccountName() + "@" + ldapService.DomainName());
 
         String dn;

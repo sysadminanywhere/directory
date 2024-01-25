@@ -11,8 +11,10 @@ import org.apache.directory.ldap.client.api.LdapConnection;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class LdapService {
@@ -131,30 +133,24 @@ public class LdapService {
     }
 
     public String getComputersContainer() {
-        Optional<String> result = getWellKnownObjects().stream().filter(c -> c.startsWith(ContainerComputers)).findFirst();
-        if (result.isPresent())
-            return result.get().replace(ContainerComputers, "");
-        else
-            return "";
+        String result = getWellKnownObjects().stream().filter(c -> c.startsWith(ContainerComputers)).collect(Collectors.toList()).get(0);
+        return result.replace(ContainerComputers, "");
     }
 
     public String getUsersContainer() {
-        Optional<String> result = getWellKnownObjects().stream().filter(c -> c.startsWith(ContainerUsers)).findFirst();
-        if (result.isPresent())
-            return result.get().replace(ContainerUsers, "");
-        else
-            return "";
+        String result = getWellKnownObjects().stream().filter(c -> c.startsWith(ContainerUsers)).collect(Collectors.toList()).get(0);
+        return result.replace(ContainerUsers, "");
     }
 
     public List<String> getWellKnownObjects() {
         List<String> list = new ArrayList<>();
 
-        List<Entry> result = search("(objectclass=domain)", SearchScope.ONELEVEL);
+        List<Entry> result = search("(objectclass=domain)", SearchScope.OBJECT);
         Optional<Entry> entry = result.stream().findFirst();
 
         if (entry.isPresent()) {
             for (Value v : entry.get().get("wellknownobjects")) {
-                list.add(v.getString());
+                list.add(v.toString());
             }
         }
 
