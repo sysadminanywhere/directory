@@ -1,5 +1,6 @@
 package com.sysadminanywhere.directory.model;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,6 +14,7 @@ import java.util.UUID;
 @NoArgsConstructor
 public class PrinterEntry {
 
+    @NotNull
     @AD(name = "cn", IsReadOnly = true)
     private String cn;
 
@@ -22,6 +24,7 @@ public class PrinterEntry {
     @AD(name = "description")
     private String description;
 
+    @NotNull
     @AD(name = "distinguishedname", IsReadOnly = true)
     private String distinguishedName;
 

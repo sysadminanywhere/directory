@@ -4,6 +4,7 @@ import com.sysadminanywhere.directory.controller.dto.AddUserDto;
 import com.sysadminanywhere.directory.model.ComputerEntry;
 import com.sysadminanywhere.directory.model.UserEntry;
 import com.sysadminanywhere.directory.service.UsersService;
+import lombok.NonNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +27,7 @@ public class UsersController {
     }
 
     @PostMapping()
-    public ResponseEntity<UserEntry> add(@RequestBody AddUserDto addUser) {
+    public ResponseEntity<UserEntry> add(@NonNull @RequestBody AddUserDto addUser) {
         return new ResponseEntity<>(usersService.add(
                 addUser.getDistinguishedName(),
                 addUser.getUser(),
@@ -39,12 +40,12 @@ public class UsersController {
     }
 
     @PutMapping()
-    public ResponseEntity<UserEntry> update(@RequestBody UserEntry user) {
+    public ResponseEntity<UserEntry> update(@NonNull @RequestBody UserEntry user) {
         return new ResponseEntity<>(usersService.update(user), HttpStatus.OK);
     }
 
     @DeleteMapping()
-    public ResponseEntity delete(@RequestParam String distinguishedName) {
+    public ResponseEntity delete(@NonNull @RequestParam String distinguishedName) {
         usersService.delete(distinguishedName);
         return new ResponseEntity(HttpStatus.OK);
     }

@@ -3,6 +3,7 @@ package com.sysadminanywhere.directory.controller;
 import com.sysadminanywhere.directory.model.ComputerEntry;
 import com.sysadminanywhere.directory.model.PrinterEntry;
 import com.sysadminanywhere.directory.service.PrintersService;
+import lombok.NonNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +26,7 @@ public class PrintersController {
     }
 
     @DeleteMapping()
-    public ResponseEntity delete(@RequestParam String distinguishedName) {
+    public ResponseEntity delete(@NonNull @RequestParam String distinguishedName) {
         printersService.delete(distinguishedName);
         return new ResponseEntity(HttpStatus.OK);
     }

@@ -1,5 +1,6 @@
 package com.sysadminanywhere.directory.model;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -11,6 +12,7 @@ import java.util.UUID;
 @NoArgsConstructor
 public class ComputerEntry {
 
+    @NotNull
     @AD(name = "cn", IsReadOnly = true)
     private String cn;
 
@@ -20,6 +22,7 @@ public class ComputerEntry {
     @AD(name = "description")
     private String description;
 
+    @NotNull
     @AD(name = "distinguishedname", IsReadOnly = true)
     private String distinguishedName;
 

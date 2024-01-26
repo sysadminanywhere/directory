@@ -4,6 +4,7 @@ import com.sysadminanywhere.directory.controller.dto.AddGroupDto;
 import com.sysadminanywhere.directory.model.ComputerEntry;
 import com.sysadminanywhere.directory.model.GroupEntry;
 import com.sysadminanywhere.directory.service.GroupsService;
+import lombok.NonNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +27,7 @@ public class GroupsController {
     }
 
     @PostMapping()
-    public ResponseEntity<GroupEntry> add(@RequestBody AddGroupDto addGroup) {
+    public ResponseEntity<GroupEntry> add(@NonNull @RequestBody AddGroupDto addGroup) {
         return new ResponseEntity<>(groupsService.add(
                 addGroup.getDistinguishedName(),
                 addGroup.getGroup(),
@@ -36,12 +37,12 @@ public class GroupsController {
     }
 
     @PutMapping()
-    public ResponseEntity<GroupEntry> update(@RequestBody GroupEntry group) {
+    public ResponseEntity<GroupEntry> update(@NonNull @RequestBody GroupEntry group) {
         return new ResponseEntity<>(groupsService.update(group), HttpStatus.OK);
     }
 
     @DeleteMapping()
-    public ResponseEntity delete(@RequestParam String distinguishedName) {
+    public ResponseEntity delete(@NonNull @RequestParam String distinguishedName) {
         groupsService.delete(distinguishedName);
         return new ResponseEntity(HttpStatus.OK);
     }
