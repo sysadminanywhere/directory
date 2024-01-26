@@ -11,31 +11,31 @@ import java.util.UUID;
 @NoArgsConstructor
 public class ComputerEntry {
 
-    @AD(name = "cn")
+    @AD(name = "cn", IsReadOnly = true)
     private String cn;
 
-    @AD(name = "whencreated")
+    @AD(name = "whencreated", IsReadOnly = true)
     private LocalDateTime created;
 
     @AD(name = "description")
     private String description;
 
-    @AD(name = "distinguishedname")
+    @AD(name = "distinguishedname", IsReadOnly = true)
     private String distinguishedName;
 
-    @AD(name = "whenchanged")
+    @AD(name = "whenchanged", IsReadOnly = true)
     private LocalDateTime modified;
 
-    @AD(name = "objectcategory")
+    @AD(name = "objectcategory", IsReadOnly = true)
     private String objectCategory;
 
-    @AD(name = "objectclass")
+    @AD(name = "objectclass", IsReadOnly = true)
     private List<String> objectClass;
 
-    @AD(name = "objectguid")
+    @AD(name = "objectguid", IsReadOnly = true)
     private UUID objectGUID;
 
-    @AD(name = "objectsid")
+    @AD(name = "objectsid", IsReadOnly = true)
     private ADSID sid;
 
     @AD(name = "samaccountname")
@@ -44,13 +44,13 @@ public class ComputerEntry {
     @AD(name = "accountexpires")
     private LocalDateTime accountExpirationDate;
 
-    @AD(name = "badpwdcount")
+    @AD(name = "badpwdcount", IsReadOnly = true)
     private int badLogonCount;
 
-    @AD(name = "badpasswordtime")
+    @AD(name = "badpasswordtime", IsReadOnly = true)
     private LocalDateTime lastBadPasswordAttempt;
 
-    @AD(name = "lastlogon")
+    @AD(name = "lastlogon", IsReadOnly = true)
     private LocalDateTime lastLogon;
 
     @AD(name = "location")
@@ -59,19 +59,19 @@ public class ComputerEntry {
     @AD(name = "managedby")
     private String managedBy;
 
-    @AD(name = "memberof")
+    @AD(name = "memberof", IsReadOnly = true)
     private List<String> memberOf;
 
-    @AD(name = "operatingsystem")
+    @AD(name = "operatingsystem", IsReadOnly = true)
     private String operatingSystem;
 
-    @AD(name = "operatingsystemhotfix")
+    @AD(name = "operatingsystemhotfix", IsReadOnly = true)
     private String operatingSystemHotfix;
 
-    @AD(name = "operatingsystemservicepack")
+    @AD(name = "operatingsystemservicepack", IsReadOnly = true)
     private String operatingSystemServicePack;
 
-    @AD(name = "operatingsystemversion")
+    @AD(name = "operatingsystemversion", IsReadOnly = true)
     private String operatingSystemVersion;
 
     @AD(name = "pwdlastset")

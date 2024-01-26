@@ -9,5 +9,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface AD {
     String name() default "";
-
+    boolean IsReadOnly() default false;
 }
